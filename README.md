@@ -18,10 +18,11 @@ Todos os serviços rodam via Docker Compose; nada disso precisa estar instalado 
 
 ## Criando um novo projeto
 
-Instale o instalador uma vez por máquina:
+Instale o instalador uma vez por máquina (via HTTPS, usando o token do [GitHub CLI](https://cli.github.com) já autenticado):
 
 ```bash
-composer global config repositories.boilerplate vcs git@github.com:FerrazRezende/boilerplate-installer.git
+composer global config github-oauth.github.com "$(gh auth token)"
+composer global config repositories.boilerplate vcs https://github.com/FerrazRezende/boilerplate-installer.git
 composer global require ferrazrezende/boilerplate-installer
 ```
 
