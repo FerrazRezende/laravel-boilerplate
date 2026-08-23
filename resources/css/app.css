@@ -4,43 +4,43 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Tema Claro */
+/* Tema Claro (paleta neutra padrão do Laravel) */
 :root {
   --font-sans: "Figtree", ui-sans-serif, system-ui, sans-serif;
   --radius: 0.5rem;
 
   /* Cores base */
-  --background: #f8fafc;
-  --foreground: #1e293b;
-  --card: #f1f5f9;
-  --card-foreground: #1e293b;
-  --popover: #ffffff;
-  --popover-foreground: #1e293b;
+  --background: hsl(0 0% 100%);
+  --foreground: hsl(0 0% 3.9%);
+  --card: hsl(0 0% 100%);
+  --card-foreground: hsl(0 0% 3.9%);
+  --popover: hsl(0 0% 100%);
+  --popover-foreground: hsl(0 0% 3.9%);
 
-  /* Primary - Azul */
-  --primary: #2563eb;
-  --primary-foreground: #ffffff;
+  /* Primary */
+  --primary: hsl(0 0% 9%);
+  --primary-foreground: hsl(0 0% 98%);
 
   /* Secondary */
-  --secondary: #e0e7ff;
-  --secondary-foreground: #1e293b;
+  --secondary: hsl(0 0% 92.1%);
+  --secondary-foreground: hsl(0 0% 9%);
 
   /* Muted */
-  --muted: #f1f5f9;
-  --muted-foreground: #64748b;
+  --muted: hsl(0 0% 96.1%);
+  --muted-foreground: hsl(0 0% 45.1%);
 
   /* Accent */
-  --accent: #3b82f6;
-  --accent-foreground: #ffffff;
+  --accent: hsl(0 0% 96.1%);
+  --accent-foreground: hsl(0 0% 9%);
 
   /* Destructive */
-  --destructive: #ef4444;
-  --destructive-foreground: #ffffff;
+  --destructive: hsl(0 84.2% 60.2%);
+  --destructive-foreground: hsl(0 0% 98%);
 
   /* Bordas e inputs */
-  --border: #e2e8f0;
-  --input: #e2e8f0;
-  --ring: #2563eb;
+  --border: hsl(0 0% 92.8%);
+  --input: hsl(0 0% 89.8%);
+  --ring: hsl(0 0% 3.9%);
 
   /* Cores de status */
   --success: #22c55e;
@@ -53,56 +53,56 @@
   --error-foreground: #ffffff;
 
   /* Charts */
-  --chart-1: #2563eb;
-  --chart-2: #22c55e;
-  --chart-3: #f59e0b;
-  --chart-4: #ef4444;
-  --chart-5: #0ea5e9;
+  --chart-1: hsl(12 76% 61%);
+  --chart-2: hsl(173 58% 39%);
+  --chart-3: hsl(197 37% 24%);
+  --chart-4: hsl(43 74% 66%);
+  --chart-5: hsl(27 87% 67%);
 
   /* Sidebar */
-  --sidebar: #ffffff;
-  --sidebar-foreground: #1e293b;
-  --sidebar-primary: #2563eb;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #e0e7ff;
-  --sidebar-accent-foreground: #1e293b;
-  --sidebar-border: #e2e8f0;
-  --sidebar-ring: #2563eb;
+  --sidebar: hsl(0 0% 98%);
+  --sidebar-foreground: hsl(240 5.3% 26.1%);
+  --sidebar-primary: hsl(0 0% 10%);
+  --sidebar-primary-foreground: hsl(0 0% 98%);
+  --sidebar-accent: hsl(0 0% 94%);
+  --sidebar-accent-foreground: hsl(0 0% 30%);
+  --sidebar-border: hsl(0 0% 91%);
+  --sidebar-ring: hsl(217.2 91.2% 59.8%);
 }
 
-/* Tema Escuro */
+/* Tema Escuro (paleta neutra padrão do Laravel) */
 .dark {
-  --background: #0f172a;
-  --foreground: #f1f5f9;
-  --card: #1e293b;
-  --card-foreground: #f1f5f9;
-  --popover: #1e293b;
-  --popover-foreground: #f1f5f9;
+  --background: hsl(0 0% 3.9%);
+  --foreground: hsl(0 0% 98%);
+  --card: hsl(0 0% 3.9%);
+  --card-foreground: hsl(0 0% 98%);
+  --popover: hsl(0 0% 3.9%);
+  --popover-foreground: hsl(0 0% 98%);
 
-  /* Primary - Azul mais claro no dark */
-  --primary: #3b82f6;
-  --primary-foreground: #ffffff;
+  /* Primary */
+  --primary: hsl(0 0% 98%);
+  --primary-foreground: hsl(0 0% 9%);
 
   /* Secondary */
-  --secondary: #1e3a8a;
-  --secondary-foreground: #f1f5f9;
+  --secondary: hsl(0 0% 14.9%);
+  --secondary-foreground: hsl(0 0% 98%);
 
   /* Muted */
-  --muted: #1e293b;
-  --muted-foreground: #94a3b8;
+  --muted: hsl(0 0% 16.08%);
+  --muted-foreground: hsl(0 0% 63.9%);
 
   /* Accent */
-  --accent: #60a5fa;
-  --accent-foreground: #0f172a;
+  --accent: hsl(0 0% 14.9%);
+  --accent-foreground: hsl(0 0% 98%);
 
   /* Destructive */
-  --destructive: #f87171;
-  --destructive-foreground: #0f172a;
+  --destructive: hsl(0 84% 60%);
+  --destructive-foreground: hsl(0 0% 98%);
 
   /* Bordas e inputs */
-  --border: #334155;
-  --input: #334155;
-  --ring: #3b82f6;
+  --border: hsl(0 0% 14.9%);
+  --input: hsl(0 0% 14.9%);
+  --ring: hsl(0 0% 83.1%);
 
   /* Cores de status */
   --success: #4ade80;
@@ -115,21 +115,21 @@
   --error-foreground: #0f172a;
 
   /* Charts */
-  --chart-1: #3b82f6;
-  --chart-2: #4ade80;
-  --chart-3: #fbbf24;
-  --chart-4: #f87171;
-  --chart-5: #38bdf8;
+  --chart-1: hsl(220 70% 50%);
+  --chart-2: hsl(160 60% 45%);
+  --chart-3: hsl(30 80% 55%);
+  --chart-4: hsl(280 65% 60%);
+  --chart-5: hsl(340 75% 55%);
 
   /* Sidebar */
-  --sidebar: #1e293b;
-  --sidebar-foreground: #f1f5f9;
-  --sidebar-primary: #3b82f6;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #1e3a8a;
-  --sidebar-accent-foreground: #f1f5f9;
-  --sidebar-border: #334155;
-  --sidebar-ring: #3b82f6;
+  --sidebar: hsl(240 5.9% 10%);
+  --sidebar-foreground: hsl(0 0% 95.9%);
+  --sidebar-primary: hsl(360 100% 100%);
+  --sidebar-primary-foreground: hsl(0 0% 100%);
+  --sidebar-accent: hsl(0 0% 15.9%);
+  --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
+  --sidebar-border: hsl(0 0% 15.9%);
+  --sidebar-ring: hsl(217.2 91.2% 59.8%);
 }
 
 @theme inline {
