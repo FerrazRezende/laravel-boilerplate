@@ -26,8 +26,9 @@ They answer different questions and do not substitute for each other.
   Register it in `config/features.php`, then put `feature:<name>` on the route
   group. Controllers must not check flags themselves.
 - **RBAC** — inside a capability that exists, what may this user do?
-  A Policy per model, permissions named `<resource>.{view,create,update,delete}`,
-  seeded in `RolePermissionSeeder`.
+  A Policy per model, permissions named `<resource>.{view,create,edit,delete}`,
+  seeded in `RolePermissionSeeder`. Note `edit`, not `update` — this matches
+  `usePermissions().canEdit()` on the frontend.
 
 Two rules that are easy to get wrong:
 
