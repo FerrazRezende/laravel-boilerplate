@@ -373,7 +373,7 @@ const getUserStatus = (userId: number): UserStatus => {
                 <DialogHeader>
                     <DialogTitle>{{ __('New User') }}</DialogTitle>
                     <DialogDescription>
-                        {{ __('Create a new user. The default password will be "password123".') }}
+                        {{ __('Create a new user. They will receive an email with a link to set their own password.') }}
                     </DialogDescription>
                 </DialogHeader>
 

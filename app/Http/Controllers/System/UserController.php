@@ -15,9 +15,11 @@ use App\Models\User;
 use App\Services\UserActivityService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -34,7 +36,7 @@ class UserController extends Controller
             ->when($search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%")
-                      ->orWhere('email', 'like', "%{$search}%");
+                        ->orWhere('email', 'like', "%{$search}%");
                 });
             })
             ->orderBy('name')
@@ -61,8 +63,7 @@ class UserController extends Controller
         $user = User::create([
             'name' => $request->validated('name'),
             'email' => $request->validated('email'),
-            'password' => Hash::make('password123'),
-            'password_changed_at' => null,
+            'password' => Hash::make(Str::random(64)),
             'active' => true,
         ]);
 
@@ -70,6 +71,10 @@ class UserController extends Controller
         if ($request->has('role_id')) {
             $user->assignRole($request->validated('role_id'));
         }
+
+        // The password above is random and never shared; the user sets their own
+        // through this link.
+        Password::sendResetLink(['email' => $user->email]);
 
         if ($request->wantsJson()) {
             return new SystemUserResource($user->load('roles', 'permissions'));

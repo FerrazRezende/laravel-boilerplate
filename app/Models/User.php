@@ -81,14 +81,6 @@ class User extends Authenticatable
     }
 
     /**
-     * Check if user needs to change password
-     */
-    public function needsPasswordChange(): bool
-    {
-        return is_null($this->password_changed_at);
-    }
-
-    /**
      * Check if user account is active
      */
     public function isActive(): bool

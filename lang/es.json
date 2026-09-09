@@ -240,7 +240,7 @@
     "View profile": "Ver perfil",
     "Impersonate": "Impersonar",
     "Deactivate": "Desactivar",
-    "Create a new user. The default password will be \"password123\".": "Cree un nuevo usuario. La contraseña predeterminada será \"password123\".",
+    "Create a new user. They will receive an email with a link to set their own password.": "Cree un nuevo usuario. Recibirá un correo con un enlace para definir su propia contraseña.",
     "User name": "Nombre del usuario",
     "email@example.com": "correo@ejemplo.com",
     "Select a role": "Seleccione un rol",
