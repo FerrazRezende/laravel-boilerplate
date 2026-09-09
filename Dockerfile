@@ -35,6 +35,11 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     opcache \
     sockets
 
+# The php base image ships a channel.xml snapshot that goes stale, which
+# makes pecl fail with "No releases available for package" for anything.
+# Refreshing it before installing is the standard fix.
+RUN pecl channel-update pecl.php.net
+
 # Install Redis extension
 RUN pecl install redis && docker-php-ext-enable redis
 
