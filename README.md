@@ -21,7 +21,6 @@ Todos os serviços rodam via Docker Compose; nada disso precisa estar instalado 
 Instale o instalador uma vez por máquina:
 
 ```bash
-composer global config repositories.boilerplate vcs https://github.com/FerrazRezende/boilerplate-installer.git
 composer global require ferrazrezende/boilerplate-installer
 ```
 
