@@ -48,7 +48,7 @@ const stack = [
     { name: 'Inertia.js + Vue 3', role: __('Front-end, no separate API') },
     { name: 'PostgreSQL', role: __('Primary datastore') },
     { name: 'Redis', role: __('Cache & session store') },
-    { name: 'RabbitMQ', role: __('Job queue') },
+    { name: 'Laravel Horizon', role: __('Job queue (Redis-backed)') },
     { name: 'Laravel Reverb', role: __('Realtime broadcasting') },
     { name: 'MinIO', role: __('S3-compatible object storage') },
     { name: 'Laravel Pennant', role: __('Feature flags') },
@@ -74,7 +74,7 @@ const features = [
     {
         icon: Workflow,
         title: __('Async jobs'),
-        description: __('RabbitMQ-backed queue for anything that should not block a request.'),
+        description: __('Redis-backed queue supervised by Horizon, with a dashboard for throughput and failed jobs.'),
     },
     {
         icon: Server,
@@ -94,7 +94,7 @@ const features = [
     {
         icon: Database,
         title: __('Fully containerized'),
-        description: __('Postgres, Redis, RabbitMQ, MinIO and the app itself run from one docker-compose file.'),
+        description: __('Postgres, Redis, Horizon, MinIO and the app itself run from one docker-compose file.'),
     },
 ];
 </script>

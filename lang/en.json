@@ -478,7 +478,7 @@
     "Row-level security with roles": "Row-level security with roles",
     "Laravel Pennant for gradual feature rollout with support for percentage, user, and database strategies.": "Laravel Pennant for gradual feature rollout with support for percentage, user, and database strategies.",
     "Async Jobs": "Async Jobs",
-    "Robust async processing with RabbitMQ for heavy tasks and real-time notifications.": "Robust async processing with RabbitMQ for heavy tasks and real-time notifications.",
+    "Robust async processing with Horizon for heavy tasks and real-time notifications.": "Robust async processing with Horizon for heavy tasks and real-time notifications.",
     "Plans for everyone": "Plans for everyone",
     "Start free self-hosted or let us handle the deploy. No surprises, no hidden limits.": "Start free self-hosted or let us handle the deploy. No surprises, no hidden limits.",
     "Free": "Free",

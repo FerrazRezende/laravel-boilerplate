@@ -1,6 +1,6 @@
 # Laravel Boilerplate
 
-Boilerplate para novos projetos Laravel com feature flags, RBAC, Redis, RabbitMQ e MinIO já configurados.
+Boilerplate para novos projetos Laravel com feature flags, RBAC, Redis, Horizon e MinIO já configurados.
 
 ## Stack
 
@@ -8,7 +8,7 @@ Boilerplate para novos projetos Laravel com feature flags, RBAC, Redis, RabbitMQ
 - **Inertia.js** para o front-end (sem API separada)
 - **PostgreSQL** como banco principal
 - **Redis** para cache e sessão
-- **RabbitMQ** como fila (`laravel/queue-rabbitmq`)
+- **Redis + Laravel Horizon** para filas (dashboard em `/horizon`)
 - **Reverb** para broadcasting em tempo real
 - **MinIO** (S3-compatível) para armazenamento de arquivos
 - **Laravel Pennant** para feature flags
@@ -18,10 +18,9 @@ Todos os serviços rodam via Docker Compose; nada disso precisa estar instalado 
 
 ## Criando um novo projeto
 
-Instale o instalador uma vez por máquina (via HTTPS, usando o token do [GitHub CLI](https://cli.github.com) já autenticado):
+Instale o instalador uma vez por máquina:
 
 ```bash
-composer global config github-oauth.github.com "$(gh auth token)"
 composer global config repositories.boilerplate vcs https://github.com/FerrazRezende/boilerplate-installer.git
 composer global require ferrazrezende/boilerplate-installer
 ```

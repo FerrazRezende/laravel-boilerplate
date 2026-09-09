@@ -16,8 +16,6 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
     environment:
       REDIS_HOST: redis
     networks:
@@ -27,7 +25,7 @@ services:
     image: nginx:alpine
     container_name: boilerplate_nginx
     ports:
-      - "80:80"
+      - "${APP_PORT:-80}:80"
     volumes:
       - .:/var/www/html
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
@@ -46,7 +44,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - "127.0.0.1:${DB_PORT}:5432"
+      - "127.0.0.1:${DB_HOST_PORT:-5432}:5432"
     networks:
       - boilerplate_network
     healthcheck:
@@ -77,7 +75,7 @@ services:
     volumes:
       - redis_data:/data
     ports:
-      - "127.0.0.1:${REDIS_PORT}:6379"
+      - "127.0.0.1:${REDIS_HOST_PORT:-6379}:6379"
     networks:
       - boilerplate_network
     healthcheck:
@@ -85,26 +83,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-
-  rabbitmq:
-    image: rabbitmq:3-management-alpine
-    container_name: boilerplate_rabbitmq
-    environment:
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
-    ports:
-      - "127.0.0.1:${RABBITMQ_PORT}:5672"
-      - "127.0.0.1:${RABBITMQ_MGMT_PORT}:15672"
-    networks:
-      - boilerplate_network
-    healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
 
   minio:
     image: minio/minio:RELEASE.2023-09-04T19-57-37Z
@@ -126,27 +104,28 @@ services:
       timeout: 5s
       retries: 5
 
-  queue_worker:
+  horizon:
     build:
       context: .
       dockerfile: Dockerfile
       args:
         WWW_UID: ${WWW_UID:-1000}
         WWW_GID: ${WWW_GID:-1000}
-    container_name: boilerplate_worker
+    container_name: boilerplate_horizon
     user: "${WWW_UID:-1000}:${WWW_GID:-1000}"
     working_dir: /var/www/html
     volumes:
       - .:/var/www/html
       - ./docker/php/php.ini:/usr/local/etc/php/conf.d/custom.ini
+    environment:
+      REDIS_HOST: redis
     depends_on:
       postgres:
         condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
       redis:
         condition: service_healthy
-    command: php artisan queue:work --tries=3 --timeout=90
+    command: php artisan horizon
+    stop_signal: SIGTERM
     networks:
       - boilerplate_network
     restart: unless-stopped
@@ -163,7 +142,7 @@ services:
     working_dir: /var/www/html
     volumes:
       - .:/var/www/html
-    command: npm run dev --host
+    command: npm run dev -- --host
     ports:
       - "5173:5173"
     networks:
@@ -201,5 +180,4 @@ volumes:
   postgres_data:
   pgadmin_data:
   redis_data:
-  rabbitmq_data:
   minio_data:
