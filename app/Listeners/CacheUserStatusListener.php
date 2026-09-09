@@ -12,8 +12,7 @@ final class CacheUserStatusListener implements ShouldQueue
 {
     public function __construct(
         private readonly UserStatusService $statusService,
-    ) {
-    }
+    ) {}
 
     public function handle(UserStatusUpdatedEvent $event): void
     {

@@ -11,14 +11,12 @@ use App\Models\UserActivity;
 use App\Services\UserStatusService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 final class UserStatusController extends Controller
 {
     public function __construct(
         private UserStatusService $statusService
-    ) {
-    }
+    ) {}
 
     /**
      * Get the current user's status.

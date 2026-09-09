@@ -4,23 +4,22 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Models\UserActivity;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Traits\HasKsuid;
+use Database\Factories\UserFactory;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Models\Permission as SpatiePermission;
 use Spatie\Permission\Traits\HasRoles;
-use App\Traits\HasKsuid;
 
 class User extends Authenticatable implements HasLocalePreference
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, HasRoles, Notifiable, HasKsuid;
+    /** @use HasFactory<UserFactory> */
+    use HasFactory, HasKsuid, HasRoles, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -72,7 +71,7 @@ class User extends Authenticatable implements HasLocalePreference
     {
         $avatar = $this->attributes['avatar'] ?? null;
 
-        if (!$avatar) {
+        if (! $avatar) {
             return null;
         }
 
@@ -122,7 +121,7 @@ class User extends Authenticatable implements HasLocalePreference
     {
         // Check denied permissions first (they override everything)
         $deniedPermissionIds = $this->denied_permissions ?? [];
-        if (!empty($deniedPermissionIds)) {
+        if (! empty($deniedPermissionIds)) {
             $deniedNames = SpatiePermission::whereIn('id', $deniedPermissionIds)
                 ->pluck('name')
                 ->toArray();

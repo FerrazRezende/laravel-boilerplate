@@ -21,7 +21,7 @@ class CheckDeniedPermissions
     {
         $user = $request->user();
 
-        if (!$user) {
+        if (! $user) {
             return $next($request);
         }
 
@@ -60,7 +60,7 @@ class CheckDeniedPermissions
     {
         $route = $request->route();
 
-        if (!$route) {
+        if (! $route) {
             return null;
         }
 

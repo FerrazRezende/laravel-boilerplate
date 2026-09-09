@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Profile;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Profile\UpdateProfilePhotoRequest;
+use App\Models\User;
 use App\Services\ProfilePictureService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,12 +16,11 @@ class ProfilePhotoController extends Controller
 {
     public function __construct(
         private ProfilePictureService $profilePictureService
-    ) {
-    }
+    ) {}
 
     public function store(UpdateProfilePhotoRequest $request): RedirectResponse
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         // Delete old photo if exists (use raw attribute, not accessor which returns signed URL)
@@ -45,7 +45,7 @@ class ProfilePhotoController extends Controller
 
     public function destroy(Request $request): RedirectResponse
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
         // Delete photo from storage (use raw attribute, not accessor which returns signed URL)

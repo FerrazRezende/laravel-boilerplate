@@ -11,6 +11,7 @@ use Illuminate\Console\Command;
 final class CleanupOldActivities extends Command
 {
     protected $signature = 'presence:cleanup-activities {days=30}';
+
     protected $description = 'Clean up user activity records older than specified days';
 
     public function handle(): int

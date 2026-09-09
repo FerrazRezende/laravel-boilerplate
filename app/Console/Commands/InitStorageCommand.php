@@ -32,8 +32,9 @@ class InitStorageCommand extends Command
 
         $bucket = config('filesystems.disks.minio.bucket');
 
-        if (!$bucket) {
+        if (! $bucket) {
             $this->error('Bucket name not configured.');
+
             return self::FAILURE;
         }
 
@@ -53,12 +54,13 @@ class InitStorageCommand extends Command
             // Check if bucket exists
             $exists = $client->doesBucketExist($bucket);
 
-            if ($exists && !$this->option('force')) {
+            if ($exists && ! $this->option('force')) {
                 $this->info("Bucket '{$bucket}' already exists.");
+
                 return self::SUCCESS;
             }
 
-            if (!$exists) {
+            if (! $exists) {
                 $this->info("Creating bucket '{$bucket}'...");
                 $client->createBucket([
                     'Bucket' => $bucket,
@@ -69,10 +71,12 @@ class InitStorageCommand extends Command
             }
 
             $this->info('Storage initialization completed successfully.');
+
             return self::SUCCESS;
 
         } catch (\Exception $e) {
             $this->error("Failed to initialize storage: {$e->getMessage()}");
+
             return self::FAILURE;
         }
     }

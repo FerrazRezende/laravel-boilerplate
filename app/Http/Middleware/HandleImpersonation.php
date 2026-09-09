@@ -23,7 +23,7 @@ class HandleImpersonation
      * - impersonate_target_id: ID of the user being impersonated
      * - impersonate_original_id: ID of the original admin user
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {

@@ -12,9 +12,7 @@ use Illuminate\Support\Facades\Redis;
 
 final readonly class UserActivityService
 {
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     public function logStatusChange(User $user, UserStatusEnum $from, UserStatusEnum $to): UserActivity
     {

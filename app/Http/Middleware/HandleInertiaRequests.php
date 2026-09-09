@@ -9,7 +9,6 @@ use App\Services\FeatureFlagService;
 use App\Services\UserStatusService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Inertia\Middleware;
 use Tighten\Ziggy\Ziggy;
@@ -36,9 +35,9 @@ class HandleInertiaRequests extends Middleware
      */
     protected function getTranslations(): array
     {
-        $langFile = lang_path(App::currentLocale() . '.json');
+        $langFile = lang_path(App::currentLocale().'.json');
 
-        if (!file_exists($langFile)) {
+        if (! file_exists($langFile)) {
             return [];
         }
 

@@ -3,8 +3,8 @@
 use App\Http\Controllers\AvatarController;
 use App\Http\Controllers\GuestLocaleController;
 use App\Http\Controllers\Profile\LocaleController as ProfileLocaleController;
-use App\Http\Controllers\Profile\ProfilePhotoController;
 use App\Http\Controllers\Profile\ProfileInformationController;
+use App\Http\Controllers\Profile\ProfilePhotoController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;

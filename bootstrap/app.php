@@ -1,16 +1,25 @@
 <?php
 
+use App\Console\Commands\CleanupOldActivities;
+use App\Http\Middleware\CheckDeniedPermissions;
+use App\Http\Middleware\EnsureFeatureIsEnabled;
+use App\Http\Middleware\HandleImpersonation;
+use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\SetLocaleMiddleware;
+use App\Http\Middleware\ShareTranslationsMiddleware;
+use App\Http\Middleware\TrackUserPresence;
 use App\Providers\FeatureServiceProvider;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withProviders([
         FeatureServiceProvider::class,
     ])
     ->withCommands([
-        \App\Console\Commands\CleanupOldActivities::class,
+        CleanupOldActivities::class,
     ])
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
@@ -25,19 +34,19 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [
-            \App\Http\Middleware\HandleInertiaRequests::class,
-            \App\Http\Middleware\SetLocaleMiddleware::class,
-            \App\Http\Middleware\ShareTranslationsMiddleware::class,
-            \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
-            \App\Http\Middleware\HandleImpersonation::class,
-            \App\Http\Middleware\CheckDeniedPermissions::class,
-            \App\Http\Middleware\TrackUserPresence::class,
+            HandleInertiaRequests::class,
+            SetLocaleMiddleware::class,
+            ShareTranslationsMiddleware::class,
+            AddLinkHeadersForPreloadedAssets::class,
+            HandleImpersonation::class,
+            CheckDeniedPermissions::class,
+            TrackUserPresence::class,
         ]);
 
         $middleware->alias([
-            'feature' => \App\Http\Middleware\EnsureFeatureIsEnabled::class,
-            'impersonate' => \App\Http\Middleware\HandleImpersonation::class,
-            'denied.check' => \App\Http\Middleware\CheckDeniedPermissions::class,
+            'feature' => EnsureFeatureIsEnabled::class,
+            'impersonate' => HandleImpersonation::class,
+            'denied.check' => CheckDeniedPermissions::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

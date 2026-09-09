@@ -20,13 +20,13 @@ final class AvatarController extends Controller
 
         $rawAvatar = $user->getRawOriginal('avatar');
 
-        if (!$rawAvatar) {
+        if (! $rawAvatar) {
             abort(404);
         }
 
         $disk = Storage::disk('minio');
 
-        if (!$disk->exists($rawAvatar)) {
+        if (! $disk->exists($rawAvatar)) {
             abort(404);
         }
 

@@ -41,7 +41,7 @@ class RoleController extends Controller
             'role' => [
                 'id' => $role->id,
                 'name' => $role->name,
-                'permissions' => $role->permissions->map(fn($p) => [
+                'permissions' => $role->permissions->map(fn ($p) => [
                     'id' => $p->id,
                     'name' => $p->name,
                 ])->toArray(),
@@ -85,7 +85,7 @@ class RoleController extends Controller
         ]);
 
         $permissions = $request->input('permissions', []);
-        if (!empty($permissions)) {
+        if (! empty($permissions)) {
             $role->syncPermissions($permissions);
         }
 

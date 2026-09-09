@@ -14,7 +14,7 @@ class RoleResource extends JsonResource
     {
         $permissions = $this->whenLoaded('permissions');
         if ($permissions instanceof EloquentCollection) {
-            $permissionsArray = $permissions->map(fn($p) => [
+            $permissionsArray = $permissions->map(fn ($p) => [
                 'id' => $p->id,
                 'name' => $p->name,
                 'guard_name' => $p->guard_name,

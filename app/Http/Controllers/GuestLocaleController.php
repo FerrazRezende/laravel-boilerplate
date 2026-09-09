@@ -18,7 +18,7 @@ class GuestLocaleController extends Controller
         $locale = $request->input('locale');
 
         // Validate locale
-        if (!in_array($locale, ['pt', 'en', 'es'])) {
+        if (! in_array($locale, ['pt', 'en', 'es'])) {
             $locale = 'pt';
         }
 

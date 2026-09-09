@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -62,7 +63,7 @@ class RolePermissionSeeder extends Seeder
         $this->command->info('Assigning "Read Only" role to regular users...');
 
         // Assign "Read Only" role to non-admin users
-        $nonAdminUsers = \App\Models\User::where('is_admin', false)->get();
+        $nonAdminUsers = User::where('is_admin', false)->get();
         foreach ($nonAdminUsers as $user) {
             $user->assignRole('Read Only');
         }

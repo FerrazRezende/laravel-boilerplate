@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
-use App\Services\UserStatusService;
 use App\Services\UserActivityService;
+use App\Services\UserStatusService;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,8 +16,7 @@ final class TrackUserPresence
     public function __construct(
         private readonly UserStatusService $statusService,
         private readonly UserActivityService $activityService,
-    ) {
-    }
+    ) {}
 
     public function handle(Request $request, Closure $next): Response
     {

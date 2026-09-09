@@ -73,6 +73,7 @@ final readonly class UserStatusService
             if (Redis::exists($heartbeatKey)) {
                 return UserStatusEnum::AWAY;
             }
+
             return UserStatusEnum::OFFLINE;
         }
 
@@ -122,6 +123,7 @@ final readonly class UserStatusService
             // If status or heartbeat doesn't exist, user is offline
             if (! Redis::exists($statusKey) || ! Redis::exists($heartbeatKey)) {
                 $statuses[$userId] = UserStatusEnum::OFFLINE->value;
+
                 continue;
             }
 
@@ -129,6 +131,7 @@ final readonly class UserStatusService
 
             if ($data === false) {
                 $statuses[$userId] = UserStatusEnum::OFFLINE->value;
+
                 continue;
             }
 
@@ -180,6 +183,7 @@ final readonly class UserStatusService
                 if ($status === 'away') {
                     $userIds[] = $userId;
                 }
+
                 continue;
             }
 
