@@ -12,6 +12,7 @@ use App\Http\Requests\System\UpdateUserRoleRequest;
 use App\Http\Resources\Profile\UserProfileResource;
 use App\Http\Resources\System\SystemUserResource;
 use App\Models\User;
+use App\Notifications\UserInvitation;
 use App\Services\UserActivityService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -73,8 +74,9 @@ class UserController extends Controller
         }
 
         // The password above is random and never shared; the user sets their own
-        // through this link.
-        Password::sendResetLink(['email' => $user->email]);
+        // through this link. Uses the reset broker's token but its own mail, so
+        // an invitation does not read as a "reset" for an account they never used.
+        $user->notify(new UserInvitation(Password::createToken($user)));
 
         if ($request->wantsJson()) {
             return new SystemUserResource($user->load('roles', 'permissions'));

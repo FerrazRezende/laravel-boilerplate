@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Models\UserActivity;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -16,7 +17,7 @@ use Spatie\Permission\Models\Permission as SpatiePermission;
 use Spatie\Permission\Traits\HasRoles;
 use App\Traits\HasKsuid;
 
-class User extends Authenticatable
+class User extends Authenticatable implements HasLocalePreference
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, HasRoles, Notifiable, HasKsuid;
@@ -78,6 +79,15 @@ class User extends Authenticatable
         // Serve avatar through the application proxy endpoint
         // This avoids issues with MinIO presigned URL host mismatches
         return url("/avatars/{$this->id}");
+    }
+
+    /**
+     * Locale to render this user's notifications in. Null falls back to the
+     * application locale, which is the case until they pick one.
+     */
+    public function preferredLocale(): ?string
+    {
+        return $this->locale;
     }
 
     /**

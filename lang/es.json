@@ -582,5 +582,11 @@
     "You are no longer impersonating.": "Ya no estás impersonando.",
     "Only admins can impersonate users.": "Solo los administradores pueden impersonar usuarios.",
     "Cannot impersonate another admin user.": "No es posible impersonar a otro usuario administrador.",
-    "This feature is not available for your account": "Esta característica no está disponible para tu cuenta"
+    "This feature is not available for your account": "Esta característica no está disponible para tu cuenta",
+    "You have been invited to :app": "Has sido invitado a :app",
+    "Hello :name!": "¡Hola, :name!",
+    "An account was created for you at :app. Use the button below to choose your password and sign in for the first time.": "Se creó una cuenta para ti en :app. Usa el botón de abajo para elegir tu contraseña e iniciar sesión por primera vez.",
+    "Set my password": "Definir mi contraseña",
+    "This invitation link expires in :count minutes.": "Este enlace de invitación caduca en :count minutos.",
+    "If you were not expecting this invitation, you can safely ignore this email.": "Si no esperabas esta invitación, puedes ignorar este correo con seguridad."
 }

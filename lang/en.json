@@ -582,5 +582,11 @@
     "You are no longer impersonating.": "You are no longer impersonating.",
     "Only admins can impersonate users.": "Only admins can impersonate users.",
     "Cannot impersonate another admin user.": "Cannot impersonate another admin user.",
-    "This feature is not available for your account": "This feature is not available for your account"
+    "This feature is not available for your account": "This feature is not available for your account",
+    "You have been invited to :app": "You have been invited to :app",
+    "Hello :name!": "Hello :name!",
+    "An account was created for you at :app. Use the button below to choose your password and sign in for the first time.": "An account was created for you at :app. Use the button below to choose your password and sign in for the first time.",
+    "Set my password": "Set my password",
+    "This invitation link expires in :count minutes.": "This invitation link expires in :count minutes.",
+    "If you were not expecting this invitation, you can safely ignore this email.": "If you were not expecting this invitation, you can safely ignore this email."
 }
