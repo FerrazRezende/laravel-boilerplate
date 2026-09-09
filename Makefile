@@ -41,6 +41,12 @@ migrate-fresh: ## Fresh migrate with seeds
 seed: ## Run database seeders
 	docker compose exec app php artisan db:seed
 
+octane-reload: ## Reload Octane workers so PHP changes take effect
+	docker compose exec app php artisan octane:reload
+
+octane-status: ## Show whether the Octane server is running
+	docker compose exec app php artisan octane:status
+
 horizon: ## Start Horizon (queue supervisor)
 	docker compose exec app php artisan horizon
 

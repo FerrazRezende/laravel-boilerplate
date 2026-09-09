@@ -16,6 +16,8 @@ RUN apt-get update && apt-get install -y \
     libjpeg62-turbo-dev \
     libwebp-dev \
     supervisor \
+    libssl-dev \
+    libcurl4-openssl-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
@@ -35,6 +37,12 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
 
 # Install Redis extension
 RUN pecl install redis && docker-php-ext-enable redis
+
+# Swoole powers Octane. The -D flags answer pecl's interactive prompts, which
+# would otherwise hang the build. curl and openssl are on because Octane's
+# concurrent task helpers and TLS-bound clients need them.
+RUN pecl install -D 'enable-openssl="yes" enable-swoole-curl="yes" enable-sockets="yes"' swoole \
+    && docker-php-ext-enable swoole
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -61,6 +69,6 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/storage \
     && chmod -R 775 /var/www/html/bootstrap/cache
 
-EXPOSE 9000
+EXPOSE 8000
 
-CMD ["php-fpm"]
+CMD ["php", "artisan", "octane:start", "--server=swoole", "--host=0.0.0.0", "--port=8000"]

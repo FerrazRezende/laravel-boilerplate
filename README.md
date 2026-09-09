@@ -4,7 +4,7 @@ Boilerplate para novos projetos Laravel com feature flags, RBAC, Redis, Horizon 
 
 ## Stack
 
-- **Laravel 12** (PHP 8.3+)
+- **Laravel 12** (PHP 8.3+) servido por **Octane/Swoole**
 - **Inertia.js** para o front-end (sem API separada)
 - **PostgreSQL** como banco principal
 - **Redis** para cache e sessão
@@ -48,6 +48,12 @@ make down    # derruba os containers
 ```
 
 Veja `make help` para a lista completa de comandos (`shell`, `artisan`, `migrate`, `test`, `pint`, ...).
+
+Como o app roda em Octane, alterações em PHP só valem depois de recarregar os workers:
+
+```bash
+make octane-reload
+```
 
 ## Testes
 

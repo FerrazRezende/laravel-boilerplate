@@ -24,8 +24,9 @@ class SetLocaleMiddleware
         if ($request->user()?->locale) {
             $locale = $request->user()->locale;
         }
-        // For guests, check session first (set by locale.set route)
-        elseif ($request->session()->has('locale')) {
+        // For guests, check session first (set by locale.set route). Token
+        // authenticated requests have no session, so ask before reaching for it.
+        elseif ($request->hasSession() && $request->session()->has('locale')) {
             $sessionLocale = $request->session()->get('locale');
             if (in_array($sessionLocale, ['pt', 'en', 'es'], true)) {
                 $locale = $sessionLocale;

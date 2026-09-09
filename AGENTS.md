@@ -13,7 +13,21 @@ make artisan args="…" # any artisan command
 make test             # phpunit
 make pint             # formatter — run it ONLY on files you changed
 make npm-build
+make octane-reload    # PHP changes need this; see below
 ```
+
+**The app runs on Octane (Swoole), not PHP-FPM.** Nginx proxies to it on port
+8000. Two consequences you must work with:
+
+- **Edited PHP is not picked up until workers reload.** Run `make octane-reload`
+  after changing anything under `app/`, `config/`, `routes/` or `bootstrap/`.
+  Blade and frontend assets are unaffected.
+- **The application instance outlives the request.** Anything you leave on it
+  leaks into the next user's request in that worker: static properties,
+  singletons holding request data, and globals like `App::setLocale()`. Set such
+  state per request or not at all. `routes/api_v1.php` applies
+  `SetLocaleMiddleware` for exactly this reason — a group that never sets a
+  locale inherits whatever the worker last used.
 
 Pint has never been run over the whole tree. `./vendor/bin/pint app/` reformats
 ~24 untouched files and buries your diff. Always pass explicit paths.
