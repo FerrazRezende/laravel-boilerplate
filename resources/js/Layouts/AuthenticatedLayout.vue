@@ -4,15 +4,11 @@ import { Button } from '@/components/ui/button';
 import NotificationCenter from '@/components/NotificationCenter.vue';
 import StatusPickerDropdown from '@/components/user/StatusPickerDropdown.vue';
 import {
-    Home,
     Sun,
     Moon,
     LogOut,
     PanelLeftClose,
     PanelLeft,
-    Flag,
-    Users,
-    Shield,
     Layers,
 } from 'lucide-vue-next';
 import ImpersonateBanner from '@/components/ImpersonateBanner.vue';
@@ -20,6 +16,7 @@ import { useDarkMode } from '@/composables/useDarkMode';
 import { useLang, __ } from '@/composables/useLang';
 import { usePermissions } from '@/composables/usePermissions';
 import { useUserStatus } from '@/composables/useUserStatus';
+import { navigation, type NavItem } from '@/lib/navigation';
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import type { UserStatus } from '@/types/user-status';
 
@@ -86,8 +83,33 @@ const impersonating = computed(() => page.props.impersonating as {
 } | undefined);
 
 const { isDark, toggleDark } = useDarkMode();
-const { canView } = usePermissions();
+const { hasPermission } = usePermissions();
 const collapsed = ref(false);
+
+const visibleNav = computed(() => {
+    const user = (page.props.auth as { user?: { is_admin?: boolean } } | undefined)?.user;
+    const features = activeFeatures.value ?? [];
+
+    return navigation.filter((item) => {
+        if (item.adminOnly && user?.is_admin !== true) return false;
+        if (item.feature && !features.includes(item.feature)) return false;
+
+        // Admins bypass RBAC, matching how the policies decide.
+        if (item.permission && user?.is_admin !== true && !hasPermission(item.permission)) {
+            return false;
+        }
+
+        return true;
+    });
+});
+
+const isCurrent = (item: NavItem): boolean => {
+    const patterns = item.active ?? item.route;
+
+    return (Array.isArray(patterns) ? patterns : [patterns]).some((pattern) =>
+        route().current(pattern),
+    );
+};
 
 const toggleSidebar = () => {
     collapsed.value = !collapsed.value;
@@ -145,95 +167,31 @@ const initials = (name: string): string => {
                 </span>
             </div>
 
-            <!-- Navigation -->
+            <!-- Navigation: rendered from the registry in lib/navigation.ts.
+                 Gates live beside each entry there, so a link cannot appear
+                 without them. -->
             <nav class="flex-1 space-y-1 p-2">
-                <!-- Home for non-admin users -->
-                <Link
-                    v-if="!auth.user.is_admin"
-                    :href="route('dashboard')"
-                    :class="[
-                        'flex items-center rounded-lg text-sm font-medium transition-colors',
-                        collapsed
-                            ? 'justify-center p-3'
-                            : 'gap-3 px-3 py-2',
-                        route().current('dashboard')
-                            ? 'bg-primary text-primary-foreground'
-                            : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
-                    ]"
-                >
-                    <Home class="h-5 w-5 shrink-0" />
-                    <span v-if="!collapsed">{{ __('Home') }}</span>
-                </Link>
-
-                <!-- Admin Section -->
-                <template v-if="auth.user.is_admin">
-                    <Link
-                        :href="route('dashboard')"
-                        :class="[
-                            'flex items-center rounded-lg text-sm font-medium transition-colors',
-                            collapsed
-                                ? 'justify-center p-3'
-                                : 'gap-3 px-3 py-2',
-                            route().current('dashboard')
-                                ? 'bg-primary text-primary-foreground'
-                                : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
-                        ]"
+                <template v-for="item in visibleNav" :key="item.route">
+                    <p
+                        v-if="item.section && !collapsed"
+                        class="px-3 mb-2 mt-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground"
                     >
-                        <Home class="h-5 w-5 shrink-0" />
-                        <span v-if="!collapsed">{{ __('Home') }}</span>
-                    </Link>
-
-                    <!-- System Section -->
-                    <div class="mt-2">
-                    <p v-if="!collapsed" class="px-3 mb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                        {{ __('System') }}
+                        {{ __(item.section) }}
                     </p>
+
                     <Link
-                        :href="route('system.features.index')"
+                        :href="route(item.route)"
                         :class="[
                             'flex items-center rounded-lg text-sm font-medium transition-colors',
-                            collapsed
-                                ? 'justify-center p-3'
-                                : 'gap-3 px-3 py-2',
-                            route().current('system.features.*')
+                            collapsed ? 'justify-center p-3' : 'gap-3 px-3 py-2',
+                            isCurrent(item)
                                 ? 'bg-primary text-primary-foreground'
                                 : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
                         ]"
                     >
-                        <Flag class="h-5 w-5 shrink-0" />
-                        <span v-if="!collapsed">{{ __('Features') }}</span>
+                        <component :is="item.icon" class="h-5 w-5 shrink-0" />
+                        <span v-if="!collapsed">{{ __(item.label) }}</span>
                     </Link>
-                    <Link
-                        :href="route('system.permissions.index')"
-                        :class="[
-                            'flex items-center rounded-lg text-sm font-medium transition-colors',
-                            collapsed
-                                ? 'justify-center p-3'
-                                : 'gap-3 px-3 py-2',
-                            route().current('system.permissions.*') || route().current('system.roles.*')
-                                ? 'bg-primary text-primary-foreground'
-                                : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
-                        ]"
-                    >
-                        <Shield class="h-5 w-5 shrink-0" />
-                        <span v-if="!collapsed">{{ __('Permissions') }}</span>
-                    </Link>
-                    <Link
-                        :href="route('system.users.index')"
-                        :class="[
-                            'flex items-center rounded-lg text-sm font-medium transition-colors',
-                            collapsed
-                                ? 'justify-center p-3'
-                                : 'gap-3 px-3 py-2',
-                            route().current('system.users.*')
-                                ? 'bg-primary text-primary-foreground'
-                                : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
-                        ]"
-                    >
-                        <Users class="h-5 w-5 shrink-0" />
-                        <span v-if="!collapsed">{{ __('Users') }}</span>
-                    </Link>
-                </div>
                 </template>
             </nav>
 
