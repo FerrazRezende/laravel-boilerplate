@@ -33,10 +33,11 @@ class UserInvitation extends Notification
 
         return (new MailMessage)
             ->subject(__('You have been invited to :app', ['app' => $appName]))
-            ->greeting(__('Hello :name!', ['name' => $notifiable->name]))
-            ->line(__('An account was created for you at :app. Use the button below to choose your password and sign in for the first time.', ['app' => $appName]))
-            ->action(__('Set my password'), $url)
-            ->line(__('This invitation link expires in :count minutes.', ['count' => config('auth.passwords.'.config('auth.defaults.passwords').'.expire')]))
-            ->line(__('If you were not expecting this invitation, you can safely ignore this email.'));
+            ->markdown('mail.invitation', [
+                'name' => $notifiable->name,
+                'appName' => $appName,
+                'url' => $url,
+                'expires' => config('auth.passwords.'.config('auth.defaults.passwords').'.expire'),
+            ]);
     }
 }

@@ -588,5 +588,6 @@
     "An account was created for you at :app. Use the button below to choose your password and sign in for the first time.": "An account was created for you at :app. Use the button below to choose your password and sign in for the first time.",
     "Set my password": "Set my password",
     "This invitation link expires in :count minutes.": "This invitation link expires in :count minutes.",
-    "If you were not expecting this invitation, you can safely ignore this email.": "If you were not expecting this invitation, you can safely ignore this email."
+    "If you were not expecting this invitation, you can safely ignore this email.": "If you were not expecting this invitation, you can safely ignore this email.",
+    "If you are having trouble clicking the button, copy and paste the URL below into your browser:": "If you are having trouble clicking the button, copy and paste the URL below into your browser:"
 }

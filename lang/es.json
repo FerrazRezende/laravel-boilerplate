@@ -588,5 +588,6 @@
     "An account was created for you at :app. Use the button below to choose your password and sign in for the first time.": "Se creó una cuenta para ti en :app. Usa el botón de abajo para elegir tu contraseña e iniciar sesión por primera vez.",
     "Set my password": "Definir mi contraseña",
     "This invitation link expires in :count minutes.": "Este enlace de invitación caduca en :count minutos.",
-    "If you were not expecting this invitation, you can safely ignore this email.": "Si no esperabas esta invitación, puedes ignorar este correo con seguridad."
+    "If you were not expecting this invitation, you can safely ignore this email.": "Si no esperabas esta invitación, puedes ignorar este correo con seguridad.",
+    "If you are having trouble clicking the button, copy and paste the URL below into your browser:": "Si tienes problemas para hacer clic en el botón, copia y pega la URL de abajo en tu navegador:"
 }
