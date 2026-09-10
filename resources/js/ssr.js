@@ -12,14 +12,15 @@ createServer((page) =>
         page,
         render: renderToString,
         title: (title) => `${title} - ${appName}`,
-        resolve: (name) =>
-            resolvePageComponent(
-                `./Pages/${name}.vue`,
-                {
-                    ...import.meta.glob('./Pages/**/*.vue'),
-                    ...import.meta.glob('/Modules/*/resources/assets/js/Pages/**/*.vue'),
-                },
-            ),
+        resolve: (name) => {
+            const pages = {
+                ...import.meta.glob('./Pages/**/*.vue'),
+                ...import.meta.glob('/Modules/*/resources/assets/js/Pages/**/*.vue'),
+            };
+            const path = Object.keys(pages).find((key) => key.endsWith(`Pages/${name}.vue`));
+
+            return resolvePageComponent(path ?? `./Pages/${name}.vue`, pages);
+        },
         setup({ App, props, plugin }) {
             return createSSRApp({ render: () => h(App, props) })
                 .use(plugin)

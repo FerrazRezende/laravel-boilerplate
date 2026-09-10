@@ -48,14 +48,19 @@ const toastOptions = {
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
-    resolve: (name) =>
-        resolvePageComponent(
-            `./Pages/${name}.vue`,
-            {
-                ...import.meta.glob('./Pages/**/*.vue'),
-                ...import.meta.glob('/Modules/*/resources/assets/js/Pages/**/*.vue'),
-            },
-        ),
+    resolve: (name) => {
+        const pages = {
+            ...import.meta.glob('./Pages/**/*.vue'),
+            ...import.meta.glob('/Modules/*/resources/assets/js/Pages/**/*.vue'),
+        };
+        // Module pages glob to an absolute-from-root key (e.g.
+        // "/Modules/Identity/resources/assets/js/Pages/Auth/Login.vue"), which never
+        // equals the "./Pages/Auth/Login.vue" string Inertia asks for — resolvePageComponent
+        // only does an exact key lookup, so we resolve by suffix first.
+        const path = Object.keys(pages).find((key) => key.endsWith(`Pages/${name}.vue`));
+
+        return resolvePageComponent(path ?? `./Pages/${name}.vue`, pages);
+    },
     setup({ el, App, props, plugin }) {
         const app = createApp({ render: () => h(App, props) })
             .use(plugin)
