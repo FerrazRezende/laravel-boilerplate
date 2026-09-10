@@ -12,13 +12,13 @@ use App\Http\Requests\System\UpdateUserRoleRequest;
 use App\Http\Resources\Profile\UserProfileResource;
 use App\Http\Resources\System\SystemUserResource;
 use App\Models\User;
-use App\Notifications\UserInvitation;
 use App\Services\UserActivityService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
+use Modules\Identity\Notifications\UserInvitation;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 

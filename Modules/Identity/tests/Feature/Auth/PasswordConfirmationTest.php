@@ -1,9 +1,9 @@
 <?php
 
-namespace Tests\Feature\Auth;
+namespace Modules\Identity\Tests\Feature\Auth;
 
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Modules\Identity\Models\User;
 use Tests\TestCase;
 
 class PasswordConfirmationTest extends TestCase

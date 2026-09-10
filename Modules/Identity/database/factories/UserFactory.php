@@ -1,17 +1,25 @@
 <?php
 
-namespace Database\Factories;
+namespace Modules\Identity\Database\Factories;
 
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Modules\Identity\Models\User;
 
 /**
  * @extends Factory<User>
  */
 class UserFactory extends Factory
 {
+    /**
+     * Factory::modelName()'s naming-convention guesser strips a literal
+     * "Database\Factories\" substring and prepends the app's root
+     * namespace — both assumptions break for a factory living under
+     * Modules\Identity, so the model is named explicitly instead.
+     */
+    protected $model = User::class;
+
     /**
      * The current password being used by the factory.
      */

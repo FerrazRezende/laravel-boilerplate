@@ -28,7 +28,7 @@ final readonly class UserActivityService
 
     public function getUserActivities(User $user, int $perPage = 20): LengthAwarePaginator
     {
-        return $user->activities()
+        return UserActivity::forUser($user->id)
             ->recent()
             ->paginate($perPage);
     }

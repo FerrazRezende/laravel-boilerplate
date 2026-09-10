@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Notifications;
+namespace Modules\Identity\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -33,7 +33,7 @@ class UserInvitation extends Notification
 
         return (new MailMessage)
             ->subject(__('You have been invited to :app', ['app' => $appName]))
-            ->markdown('mail.invitation', [
+            ->markdown('identity::mail.invitation', [
                 'name' => $notifiable->name,
                 'appName' => $appName,
                 'url' => $url,

@@ -11,7 +11,7 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Bell, CheckCheck, Loader2 } from 'lucide-vue-next';
-import type { Notification } from '@/types/notification';
+import type { Notification } from '../types/notification';
 
 const notifications = ref<Notification[]>([]);
 const unreadCount = ref(0);

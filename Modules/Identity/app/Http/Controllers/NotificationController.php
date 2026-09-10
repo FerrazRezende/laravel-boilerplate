@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api;
+namespace Modules\Identity\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Notification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Modules\Identity\Models\Notification;
 
 class NotificationController extends Controller
 {

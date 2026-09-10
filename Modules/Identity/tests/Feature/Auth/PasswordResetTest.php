@@ -1,11 +1,11 @@
 <?php
 
-namespace Tests\Feature\Auth;
+namespace Modules\Identity\Tests\Feature\Auth;
 
-use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
+use Modules\Identity\Models\User;
 use Tests\TestCase;
 
 class PasswordResetTest extends TestCase

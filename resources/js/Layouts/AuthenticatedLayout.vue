@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import { Button } from '@/components/ui/button';
-import NotificationCenter from '@/components/NotificationCenter.vue';
+import NotificationCenter from '@modules/Identity/resources/assets/js/components/NotificationCenter.vue';
 import StatusPickerDropdown from '@/components/user/StatusPickerDropdown.vue';
 import {
     Sun,
