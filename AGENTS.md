@@ -115,6 +115,14 @@ lines, place it above the code it explains, and write full sentences.
 - Host ports are `APP_PORT` / `DB_HOST_PORT` / `REDIS_HOST_PORT`, separate from
   the in-network `DB_PORT` / `REDIS_PORT`. Change the former on a port clash;
   changing the latter breaks the app's own connections.
+- `RUSTFS_PORT` (the host-side mapping) and `RUSTFS_PUBLIC_URL` (baked into
+  every presigned avatar URL) are two separate values that both encode the
+  same port. Change one on a port clash and forget the other, and avatars
+  redirect to a port nothing is listening on — wrong host port, not a broken
+  signature. Octane made this worse to debug: a stale worker kept signing
+  URLs with the old `RUSTFS_PUBLIC_URL` well after the `.env` file and even
+  `php artisan octane:reload` had already picked up the new one, so the fix
+  needed a full `docker compose restart app`, not just a reload.
 - nginx resolves the `app` upstream once at container start and caches that IP
   for its lifetime. Recreating `app` alone (e.g. `docker compose up -d --build
   app`) leaves nginx pointed at a dead IP — 502 on every request even though

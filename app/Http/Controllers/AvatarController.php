@@ -5,16 +5,21 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
 
 final class AvatarController extends Controller
 {
     /**
-     * Serve a user's avatar image from RustFS.
+     * Redirect to a presigned RustFS URL for the user's avatar.
+     *
+     * Existence is checked on the 'rustfs' disk (internal endpoint, reachable
+     * from this container). The URL itself is signed on 'rustfs_public'
+     * (public endpoint) — see config/filesystems.php for why those cannot be
+     * the same disk.
      */
-    public function show(Request $request, string $userId): Response
+    public function show(Request $request, string $userId): RedirectResponse
     {
         $user = User::findOrFail($userId);
 
@@ -24,18 +29,12 @@ final class AvatarController extends Controller
             abort(404);
         }
 
-        $disk = Storage::disk('rustfs');
-
-        if (! $disk->exists($rawAvatar)) {
+        if (! Storage::disk('rustfs')->exists($rawAvatar)) {
             abort(404);
         }
 
-        $data = $disk->get($rawAvatar);
-        $mimeType = $disk->mimeType($rawAvatar);
+        $url = Storage::disk('rustfs_public')->temporaryUrl($rawAvatar, now()->addMinutes(15));
 
-        return new Response($data, 200, [
-            'Content-Type' => $mimeType,
-            'Cache-Control' => 'public, max-age=3600',
-        ]);
+        return redirect($url);
     }
 }

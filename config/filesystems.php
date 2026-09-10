@@ -74,6 +74,26 @@ return [
             'report' => false,
         ],
 
+        // Same bucket as 'rustfs', reachable at the same object storage — this
+        // disk exists only to sign presigned URLs, never to read or write.
+        // SigV4 signs the Host header, so a URL signed against the internal
+        // 'rustfs' endpoint 403s the moment you swap in the public host: the
+        // signature no longer matches. Signing against the public endpoint
+        // from the start is the only fix; the request that generates the
+        // signature never actually leaves this process; it costs nothing that
+        // this host is unreachable from inside the container.
+        'rustfs_public' => [
+            'driver' => 's3',
+            'key' => env('RUSTFS_ACCESS_KEY'),
+            'secret' => env('RUSTFS_SECRET_KEY'),
+            'region' => env('RUSTFS_REGION', 'us-east-1'),
+            'bucket' => env('RUSTFS_BUCKET', 'boilerplate'),
+            'endpoint' => env('RUSTFS_PUBLIC_URL'),
+            'use_path_style_endpoint' => true,
+            'throw' => false,
+            'report' => false,
+        ],
+
     ],
 
     /*
