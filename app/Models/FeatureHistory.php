@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\FeatureHistoryActionEnum;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -24,6 +25,7 @@ class FeatureHistory extends Model
     protected function casts(): array
     {
         return [
+            'action' => FeatureHistoryActionEnum::class,
             'previous_state' => 'array',
             'new_state' => 'array',
         ];

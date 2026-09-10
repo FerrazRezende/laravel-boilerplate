@@ -18,7 +18,7 @@ class ActivateFeatureRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'strategy' => ['required', Rule::in(array_column(RolloutStrategyEnum::cases(), 'value'))],
+            'strategy' => ['required', Rule::enum(RolloutStrategyEnum::class)],
             'percentage' => ['nullable', 'integer', 'min:0', 'max:100', 'required_if:strategy,percentage'],
             'user_ids' => ['nullable', 'array', 'required_if:strategy,users'],
             'user_ids.*' => ['string'],

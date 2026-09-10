@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\UserActivityTypeEnum;
+use App\Enums\UserStatusEnum;
 use App\Traits\HasKsuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -26,6 +27,8 @@ class UserActivity extends Model
     {
         return [
             'activity_type' => UserActivityTypeEnum::class,
+            'from_status' => UserStatusEnum::class,
+            'to_status' => UserStatusEnum::class,
             'metadata' => 'array',
         ];
     }

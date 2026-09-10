@@ -7,15 +7,17 @@ namespace App\Http\Controllers;
 use App\Enums\UserStatusEnum;
 use App\Events\UserStatusUpdatedEvent;
 use App\Models\User;
-use App\Models\UserActivity;
+use App\Services\UserActivityService;
 use App\Services\UserStatusService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 final class UserStatusController extends Controller
 {
     public function __construct(
-        private UserStatusService $statusService
+        private UserStatusService $statusService,
+        private UserActivityService $activityService,
     ) {}
 
     /**
@@ -31,7 +33,7 @@ final class UserStatusController extends Controller
         if ($statusWithMeta === null) {
             // No status explicitly chosen yet
             return response()->json([
-                'status' => 'online',
+                'status' => UserStatusEnum::ONLINE->value,
                 'updated_at' => now()->toIso8601String(),
             ]);
         }
@@ -48,7 +50,7 @@ final class UserStatusController extends Controller
         $user = $request->user();
 
         $request->validate([
-            'status' => ['required', 'in:online,away,busy,offline'],
+            'status' => ['required', Rule::enum(UserStatusEnum::class)],
             'message' => ['nullable', 'string', 'max:255'],
         ]);
 
@@ -59,14 +61,12 @@ final class UserStatusController extends Controller
         // Set the new status
         $this->statusService->setStatus($user, $statusEnum);
 
-        // Log the activity
-        UserActivity::create([
-            'user_id' => $user->id,
-            'activity_type' => 'status_changed',
-            'from_status' => $previousStatus->value,
-            'to_status' => $statusEnum->value,
-            'metadata' => $request->input('message') ? ['message' => $request->input('message')] : null,
-        ]);
+        $this->activityService->logStatusChange(
+            $user,
+            $previousStatus,
+            $statusEnum,
+            $request->input('message') ? ['message' => $request->input('message')] : null,
+        );
 
         // Broadcast the status change
         broadcast(new UserStatusUpdatedEvent(

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Enums\FeatureHistoryActionEnum;
 use App\Enums\RolloutStrategyEnum;
 use App\Models\FeatureHistory;
 use App\Models\FeatureSetting;
@@ -89,7 +90,7 @@ class FeatureFlagService
         $definition = config("features.definitions.{$featureName}");
         abort_unless($definition, 404, "Feature {$featureName} not found");
 
-        $strategy = RolloutStrategyEnum::from($options['strategy'] ?? 'all');
+        $strategy = RolloutStrategyEnum::from($options['strategy'] ?? RolloutStrategyEnum::ALL->value);
         $percentage = $options['percentage'] ?? 0;
         $userIds = $options['user_ids'] ?? null;
 
@@ -107,7 +108,7 @@ class FeatureFlagService
             'is_active' => true,
         ]);
 
-        $this->recordHistory($setting, 'activated', $actor, $previousState, $setting->fresh()->toArray());
+        $this->recordHistory($setting, FeatureHistoryActionEnum::ACTIVATED, $actor, $previousState, $setting->fresh()->toArray());
 
         // Purge Pennant cache so feature gets re-resolved
         Feature::purge($featureName);
@@ -136,7 +137,7 @@ class FeatureFlagService
             'is_active' => false,
         ]);
 
-        $this->recordHistory($setting, 'deactivated', $actor, $previousState, $setting->fresh()->toArray());
+        $this->recordHistory($setting, FeatureHistoryActionEnum::DEACTIVATED, $actor, $previousState, $setting->fresh()->toArray());
 
         // Purge Pennant cache so feature gets re-resolved
         Feature::purge($featureName);
@@ -162,7 +163,7 @@ class FeatureFlagService
 
         if (! empty($updateData)) {
             $setting->update($updateData);
-            $this->recordHistory($setting, 'updated', $actor, $previousState, $setting->fresh()->toArray());
+            $this->recordHistory($setting, FeatureHistoryActionEnum::UPDATED, $actor, $previousState, $setting->fresh()->toArray());
 
             // Purge Pennant cache so feature gets re-resolved
             Feature::purge($featureName);
@@ -183,7 +184,7 @@ class FeatureFlagService
         if (! in_array($userId, $userIds)) {
             $userIds[] = $userId;
             $setting->update(['user_ids' => $userIds]);
-            $this->recordHistory($setting, 'updated', $actor, $previousState, $setting->fresh()->toArray());
+            $this->recordHistory($setting, FeatureHistoryActionEnum::UPDATED, $actor, $previousState, $setting->fresh()->toArray());
 
             // Purge Pennant cache so feature gets re-resolved
             Feature::purge($featureName);
@@ -204,7 +205,7 @@ class FeatureFlagService
         $userIds = array_values(array_diff($userIds, [$userId]));
 
         $setting->update(['user_ids' => $userIds ?: null]);
-        $this->recordHistory($setting, 'updated', $actor, $previousState, $setting->fresh()->toArray());
+        $this->recordHistory($setting, FeatureHistoryActionEnum::UPDATED, $actor, $previousState, $setting->fresh()->toArray());
 
         // Purge Pennant cache so feature gets re-resolved
         Feature::purge($featureName);
@@ -343,7 +344,7 @@ class FeatureFlagService
     /**
      * Record a change in feature history.
      */
-    private function recordHistory(FeatureSetting $setting, string $action, User $actor, ?array $previous, ?array $new): void
+    private function recordHistory(FeatureSetting $setting, FeatureHistoryActionEnum $action, User $actor, ?array $previous, ?array $new): void
     {
         FeatureHistory::create([
             'feature_setting_id' => $setting->id,

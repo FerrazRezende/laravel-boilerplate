@@ -1,7 +1,7 @@
 # AGENTS.md
 
 Laravel 12 + Inertia/Vue 3 boilerplate. Postgres, Redis (cache, session, queue),
-Horizon, Reverb, MinIO, Pennant feature flags, Spatie RBAC. Everything runs in
+Horizon, Reverb, RustFS, Pennant feature flags, Spatie RBAC. Everything runs in
 Docker Compose; nothing is installed on the host.
 
 ## Commands
@@ -103,6 +103,38 @@ Do not write:
 Prefer renaming to commenting. A comment explaining a bad name is a defect
 report against the name. When a comment is warranted, keep it to one or two
 lines, place it above the code it explains, and write full sentences.
+
+## Enums
+
+Any closed, fixed set of values — `app/Enums/*` — follows the same shape:
+
+- **Backed by `string`**, never `int`. A string value is self-documenting in
+  the database and in API responses; an int forces a lookup to mean anything.
+- **Business logic that varies per case lives on the enum**, as a method with
+  a `match ($this)`, not as a conditional scattered across services or
+  components — `label()`, `color()`, `isActive()`. One enum accumulates every
+  case-dependent rule instead of each caller re-deciding it.
+- **Never re-type a case's value as a string literal elsewhere.** Reference
+  the case itself (`UserStatusEnum::ONLINE`) or its `->value`; use
+  `Enum::cases()` for exhaustive lists. A literal that happens to match today
+  silently stops matching the day a case is renamed, and nothing catches it.
+- **Validate with `Rule::enum(EnumClass::class)`**, not a hand-written
+  `in:a,b,c` list or `Rule::in(array_column(...))`. The enum is then the only
+  place that knows its own values — adding a case changes one file, not two
+  that have to be remembered to stay in sync.
+- **Cast every column that holds a case**, including nullable ones
+  (`'from_status' => UserStatusEnum::class` casts a null column to `null`,
+  not an error) — a column left as a plain string defeats the enum the moment
+  someone reads it back.
+- **Migrations declare `string`, not a native DB `enum` column.** A native
+  enum turns "add a case" into a schema migration; a string column with an
+  app-level enum turns it into a one-line PHP change. `user_activities.
+  activity_type` is a known exception, predating this convention — treat it
+  as legacy, not as a pattern to repeat.
+- The frontend mirrors each enum as a hand-kept literal union
+  (`resources/js/types/user-status.ts`) — there is no codegen in this
+  template. Adding or renaming a case means updating that union too; nothing
+  will warn you if you forget.
 
 ## Gotchas
 

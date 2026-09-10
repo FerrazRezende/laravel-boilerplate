@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Enums\UserActivityTypeEnum;
 use App\Enums\UserStatusEnum;
 use App\Models\User;
 use App\Models\UserActivity;
@@ -14,14 +15,14 @@ final readonly class UserActivityService
 {
     public function __construct() {}
 
-    public function logStatusChange(User $user, UserStatusEnum $from, UserStatusEnum $to): UserActivity
+    public function logStatusChange(User $user, UserStatusEnum $from, UserStatusEnum $to, ?array $metadata = null): UserActivity
     {
         return UserActivity::create([
             'user_id' => $user->id,
-            'activity_type' => 'status_changed',
-            'from_status' => $from->value,
-            'to_status' => $to->value,
-            'metadata' => null,
+            'activity_type' => UserActivityTypeEnum::STATUS_CHANGED,
+            'from_status' => $from,
+            'to_status' => $to,
+            'metadata' => $metadata,
         ]);
     }
 
@@ -43,7 +44,7 @@ final readonly class UserActivityService
 
         UserActivity::create([
             'user_id' => $user->id,
-            'activity_type' => 'page_view',
+            'activity_type' => UserActivityTypeEnum::PAGE_VIEW,
             'from_status' => null,
             'to_status' => null,
             'metadata' => [
