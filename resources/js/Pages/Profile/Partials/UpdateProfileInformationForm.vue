@@ -1,7 +1,18 @@
 <script setup>
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { __ } from '@/composables/useLang';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
 
 defineProps({
     mustVerifyEmail: {
@@ -18,11 +29,134 @@ const form = useForm({
     name: user.name,
     email: user.email,
 });
+
+// Photo upload: a separate form/route (profile.photo.store) from the name/email
+// one above, submitted the moment a file is picked rather than on this
+// section's own submit button, since there isn't one.
+const photoForm = useForm({ photo: null });
+const photoInput = ref(null);
+const previewUrl = ref(null);
+const confirmingPhotoRemoval = ref(false);
+
+const initials = computed(() => {
+    return (user.name ?? '?')
+        .trim()
+        .split(' ')
+        .slice(0, 2)
+        .map((part) => part.charAt(0).toUpperCase())
+        .join('');
+});
+
+const selectPhoto = () => {
+    photoInput.value?.click();
+};
+
+const onPhotoSelected = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (previewUrl.value) {
+        URL.revokeObjectURL(previewUrl.value);
+    }
+    previewUrl.value = URL.createObjectURL(file);
+    photoForm.photo = file;
+
+    photoForm.post(route('profile.photo.store'), {
+        preserveScroll: true,
+        forceFormData: true,
+        onFinish: () => {
+            if (previewUrl.value) {
+                URL.revokeObjectURL(previewUrl.value);
+                previewUrl.value = null;
+            }
+            photoInput.value.value = '';
+        },
+    });
+};
+
+const removePhoto = () => {
+    photoForm.delete(route('profile.photo.destroy'), {
+        preserveScroll: true,
+        onSuccess: () => (confirmingPhotoRemoval.value = false),
+    });
+};
 </script>
 
 <template>
     <section>
-        <header>
+        <header class="pb-6">
+            <h2 class="text-lg font-medium text-foreground">
+                {{ __('Profile Photo') }}
+            </h2>
+
+            <p class="mt-1 text-sm text-muted-foreground">
+                {{ __('Upload a profile photo to personalize your account.') }}
+            </p>
+        </header>
+
+        <div class="flex items-center gap-4 border-b border-border pb-6">
+            <Avatar class="h-16 w-16">
+                <AvatarImage v-if="previewUrl || user.avatar" :src="previewUrl || user.avatar" :alt="user.name" />
+                <AvatarFallback class="text-lg font-medium">{{ initials }}</AvatarFallback>
+            </Avatar>
+
+            <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <input
+                    ref="photoInput"
+                    type="file"
+                    accept="image/jpeg,image/jpg,image/png"
+                    class="hidden"
+                    :aria-label="__('Click to upload or change your profile photo')"
+                    @change="onPhotoSelected"
+                />
+
+                <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    :disabled="photoForm.processing"
+                    @click="selectPhoto"
+                >
+                    {{ __('Change photo') }}
+                </Button>
+
+                <Button
+                    v-if="user.avatar"
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    class="text-destructive hover:text-destructive"
+                    @click="confirmingPhotoRemoval = true"
+                >
+                    {{ __('Remove photo') }}
+                </Button>
+            </div>
+
+            <p v-if="photoForm.errors.photo" class="text-sm text-destructive">
+                {{ photoForm.errors.photo }}
+            </p>
+        </div>
+
+        <Dialog v-model:open="confirmingPhotoRemoval">
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>{{ __('Remove photo') }}</DialogTitle>
+                    <DialogDescription>
+                        {{ __('Are you sure you want to remove your profile photo?') }}
+                    </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                    <Button variant="outline" @click="confirmingPhotoRemoval = false">
+                        {{ __('Cancel') }}
+                    </Button>
+                    <Button variant="destructive" :disabled="photoForm.processing" @click="removePhoto">
+                        {{ __('Remove photo') }}
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+
+        <header class="pt-6">
             <h2 class="text-lg font-medium text-foreground">
                 Profile Information
             </h2>

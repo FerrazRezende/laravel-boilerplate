@@ -30,7 +30,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/avatars/{userId}', [AvatarController::class, 'show'])->name('avatar.show');
     Route::get('/profile', [ProfileInformationController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileInformationController::class, 'update'])->name('profile.update');
-    Route::post('/profile/password', [ProfileInformationController::class, 'updatePassword'])->name('profile.password.update');
     Route::delete('/profile', [ProfileInformationController::class, 'destroy'])->name('profile.destroy');
     Route::patch('/profile/locale', [ProfileLocaleController::class, 'update'])
         ->name('profile.locale.update')

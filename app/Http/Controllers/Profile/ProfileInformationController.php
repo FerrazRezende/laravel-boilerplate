@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Profile;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Profile\PasswordUpdateRequest;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
@@ -63,20 +62,5 @@ class ProfileInformationController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
-    }
-
-    /**
-     * Update the user's password.
-     */
-    public function updatePassword(PasswordUpdateRequest $request): RedirectResponse
-    {
-        $user = $request->user();
-
-        $user->password = $request->validated('password');
-        $user->password_changed_at = now();
-        $user->save();
-
-        return Redirect::route('profile.edit')
-            ->with('status', 'password-updated');
     }
 }
