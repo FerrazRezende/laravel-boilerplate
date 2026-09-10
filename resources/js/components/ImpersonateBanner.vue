@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { router } from '@inertiajs/vue3';
 import { Button } from '@/components/ui/button';
+import { __ } from '@/composables/useLang';
 import { AlertTriangle, LogOut } from 'lucide-vue-next';
 
 defineProps<{
@@ -17,7 +18,7 @@ const stopImpersonating = (): void => {
         <div class="flex items-center gap-2">
             <AlertTriangle class="h-4 w-4 text-amber-600 dark:text-amber-500" />
             <span class="text-sm font-medium text-amber-900 dark:text-amber-100">
-                Você está acessando como <strong>{{ userName }}</strong>.
+                {{ __('You are signed in as') }} <strong>{{ userName }}</strong>.
             </span>
         </div>
         <Button
@@ -27,7 +28,7 @@ const stopImpersonating = (): void => {
             @click="stopImpersonating"
         >
             <LogOut class="mr-2 h-4 w-4" />
-            Sair
+            {{ __('Logout') }}
         </Button>
     </div>
 </template>

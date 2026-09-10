@@ -140,7 +140,7 @@ const searchUsers = (): void => {
 };
 
 const openCreateDialog = (): void => {
-    // Verificar se há roles disponíveis
+    // Check whether any roles exist
     if (!props.allRoles || props.allRoles.length === 0) {
         toast.error(__('It is not possible to create a user without roles, create a role first'));
         return;

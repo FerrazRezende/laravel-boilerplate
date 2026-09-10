@@ -4,7 +4,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Tema Claro (paleta neutra padrão do Laravel) */
+/* Light theme (Laravel's default neutral palette) */
 :root {
   --font-sans: "Figtree", ui-sans-serif, system-ui, sans-serif;
   --radius: 0.5rem;
@@ -70,7 +70,7 @@
   --sidebar-ring: hsl(217.2 91.2% 59.8%);
 }
 
-/* Tema Escuro (paleta neutra padrão do Laravel) */
+/* Dark theme (Laravel's default neutral palette) */
 .dark {
   --background: hsl(0 0% 3.9%);
   --foreground: hsl(0 0% 98%);

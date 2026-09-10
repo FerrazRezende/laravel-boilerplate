@@ -28,12 +28,12 @@ trait HasKsuid
             return false;
         }
 
-        // KSUID tem 27 caracteres
+        // KSUIDs are 27 characters long
         if (strlen($value) !== 27) {
             return false;
         }
 
-        // KSUID usa apenas caracteres alfanuméricos (base62)
+        // KSUIDs are base62: alphanumeric characters only
         return preg_match('/^[0-9a-zA-Z]{27}$/', $value) === 1;
     }
 }

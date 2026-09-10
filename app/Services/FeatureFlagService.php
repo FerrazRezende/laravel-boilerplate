@@ -28,13 +28,13 @@ class FeatureFlagService
             ->map(function (array $definition, string $name) use ($settings) {
                 $setting = $settings->get($name);
 
-                // Se há setting, usa o status do banco
-                // Se não há setting, usa o default por ambiente
+                // With a setting, its status wins; otherwise fall back to the
+                // environment default
                 $isActive = $setting
                     ? $setting->is_active
                     : $this->isFeatureActiveByDefault($name);
 
-                // Se está ativo por padrão (sem setting), estratégia é "all"
+                // Active by default with no setting: treat as "all"
                 $strategy = $setting?->strategy ??
                     ($isActive ? RolloutStrategyEnum::ALL : RolloutStrategyEnum::INACTIVE);
 
@@ -63,7 +63,7 @@ class FeatureFlagService
 
         $setting = FeatureSetting::where('feature_name', $featureName)->first();
 
-        // Usa a mesma lógica do getAllFeatures() para consistência
+        // Same logic as getAllFeatures(), kept consistent
         $isActive = $setting
             ? $setting->is_active
             : $this->isFeatureActiveByDefault($featureName);
@@ -224,17 +224,17 @@ class FeatureFlagService
 
         $setting = FeatureSetting::where('feature_name', $featureName)->first();
 
-        // Se não há setting no banco, usa o default por ambiente
+        // No setting in the database: fall back to the environment default
         if (! $setting) {
             return $this->isFeatureActiveByDefault($featureName);
         }
 
-        // Se há setting mas está inativo, feature desativada
+        // Setting exists but is inactive: feature is off
         if (! $setting->is_active) {
             return false;
         }
 
-        // Se há setting ativo, segue a estratégia definida
+        // Setting is active: follow its rollout strategy
         return match ($setting->strategy) {
             RolloutStrategyEnum::ALL => true,
             RolloutStrategyEnum::PERCENTAGE => $this->checkPercentage($user->id, $setting->percentage),
@@ -276,7 +276,7 @@ class FeatureFlagService
             ->map(fn (FeatureHistory $history) => [
                 'id' => $history->id,
                 'action' => $history->action,
-                'actor' => $history->actor?->name ?? $history->actor?->email ?? 'Usuário removido',
+                'actor' => $history->actor?->name ?? $history->actor?->email ?? __('Removed user'),
                 'previous_state' => $history->previous_state,
                 'new_state' => $history->new_state,
                 'created_at' => $history->created_at->toISOString(),
@@ -290,12 +290,12 @@ class FeatureFlagService
     {
         $env = config('app.env');
 
-        // Dev/Local/Testing: todas as features implementadas ativas
+        // Dev/local/testing: every implemented feature is active
         if (in_array($env, ['local', 'development', 'dev', 'testing'])) {
             return true;
         }
 
-        // Production: features até FIRST_DEPLOY_DATE ativas
+        // Production: active once implemented_at reaches FIRST_DEPLOY_DATE
         $feature = config("features.definitions.{$featureName}");
         $deployDate = config('features.first_deploy_date');
 

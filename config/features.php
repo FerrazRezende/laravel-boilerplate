@@ -6,9 +6,9 @@ return [
     | First Deploy Date
     |--------------------------------------------------------------------------
     |
-    | Data do primeiro deploy em produção. Features com implemented_at
-    | anterior ou igual a esta data são ativadas por padrão em prod.
-    | Em dev/local, todas as features implementadas são ativadas.
+    | Date of the first production deploy. Features whose implemented_at is on
+    | or before this date are active by default in production.
+    | In dev/local, every implemented feature is active.
     |
     */
     'first_deploy_date' => env('FEATURES_FIRST_DEPLOY_DATE'),

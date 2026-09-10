@@ -49,12 +49,12 @@ class FeatureServiceProvider extends ServiceProvider
 
         $setting = FeatureSetting::where('feature_name', $featureName)->first();
 
-        // Se não há setting, usa default por ambiente
+        // No setting yet: fall back to the environment default
         if (! $setting) {
             return $this->isFeatureActiveByDefault($featureName);
         }
 
-        // Se há setting inativo, feature desativada
+        // Setting exists but is inactive: feature is off
         if (! $setting->is_active) {
             return false;
         }
@@ -74,12 +74,12 @@ class FeatureServiceProvider extends ServiceProvider
     {
         $env = config('app.env');
 
-        // Dev/Local/Testing: todas as features implementadas ativas
+        // Dev/local/testing: every implemented feature is active
         if (in_array($env, ['local', 'development', 'dev', 'testing'])) {
             return true;
         }
 
-        // Production: features até FIRST_DEPLOY_DATE ativas
+        // Production: active once implemented_at reaches FIRST_DEPLOY_DATE
         $feature = config("features.definitions.{$featureName}");
         $deployDate = config('features.first_deploy_date');
 

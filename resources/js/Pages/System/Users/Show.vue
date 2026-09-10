@@ -296,24 +296,24 @@ const togglePermission = (permId: number): void => {
     const newState = !currentState;
 
     if (newState) {
-        // Marcando - remover de negados se estiver lá
+        // Checking on: clear it from denied if it was there
         deniedPermissionIds.value = deniedPermissionIds.value.filter(id => id !== permId);
-        // Se NÃO vem da role, adicionar como direta
+        // Not granted by the role: add it as a direct permission
         if (!rolePermissionIds.value.includes(permId)) {
             directPermissionIds.value.push(permId);
         }
     } else {
-        // Desmarcando
+        // Checking off
         if (rolePermissionIds.value.includes(permId)) {
-            // Se vem da role, adicionar à lista de negados
+            // Granted by the role: add it to the denied list
             deniedPermissionIds.value.push(permId);
         } else {
-            // Se é direta, remover
+            // It was a direct permission: remove it
             directPermissionIds.value = directPermissionIds.value.filter(id => id !== permId);
         }
     }
 
-    // Atualizar estado visual do checkbox imediatamente
+    // Update the checkbox's visual state immediately
     checkboxStates.value[permId] = newState;
 };
 
@@ -420,10 +420,10 @@ const userInitials = computed(() => {
 
         <div>
             <PvTabs v-model="activeTab" :tabs="tabs">
-                <!-- Aba Informações -->
+                <!-- Info tab -->
                 <PvTabsContent value="info" :active-tab="activeTab">
                     <div class="grid gap-6 md:grid-cols-2">
-                        <!-- Informações Básicas -->
+                        <!-- Basic information -->
                         <Card>
                             <CardHeader>
                                 <CardTitle class="flex items-center gap-2">
@@ -489,10 +489,10 @@ const userInitials = computed(() => {
                     </div>
                 </PvTabsContent>
 
-                <!-- Aba Roles e Permissões -->
+                <!-- Roles and permissions tab -->
                 <PvTabsContent value="roles" :active-tab="activeTab">
                     <div class="grid gap-6 md:grid-cols-1">
-                        <!-- Role do Usuário -->
+                        <!-- User's role -->
                         <Card>
                             <CardHeader>
                                 <CardTitle class="flex items-center gap-2">
@@ -539,7 +539,7 @@ const userInitials = computed(() => {
                             </CardContent>
                         </Card>
 
-                        <!-- Todas as Permissões do Sistema -->
+                        <!-- All system permissions -->
                         <Card>
                             <CardHeader>
                                 <CardTitle class="flex items-center gap-2">
