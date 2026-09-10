@@ -9,7 +9,6 @@ use App\Http\Requests\System\StoreUserRequest;
 use App\Http\Requests\System\SyncDirectPermissionsRequest;
 use App\Http\Requests\System\UpdateUserRequest;
 use App\Http\Requests\System\UpdateUserRoleRequest;
-use App\Http\Resources\Profile\UserProfileResource;
 use App\Http\Resources\System\SystemUserResource;
 use App\Models\User;
 use App\Services\UserActivityService;
@@ -19,6 +18,7 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Modules\Identity\Notifications\UserInvitation;
+use Modules\Profile\Http\Resources\UserProfileResource;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 

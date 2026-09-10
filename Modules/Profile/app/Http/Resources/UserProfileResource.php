@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Resources\Profile;
+namespace Modules\Profile\Http\Resources;
 
 use App\Services\UserStatusService;
 use Illuminate\Http\Request;

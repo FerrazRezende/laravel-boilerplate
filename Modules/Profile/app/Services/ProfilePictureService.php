@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Services;
+namespace Modules\Profile\Services;
 
 use App\Models\User;
 use Illuminate\Http\UploadedFile;

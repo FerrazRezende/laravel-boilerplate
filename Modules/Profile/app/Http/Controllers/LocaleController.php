@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Profile;
+namespace Modules\Profile\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Profile\UpdateLocaleRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\App;
+use Modules\Profile\Http\Requests\UpdateLocaleRequest;
 
 class LocaleController extends Controller
 {

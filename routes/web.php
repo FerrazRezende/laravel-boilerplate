@@ -1,10 +1,6 @@
 <?php
 
-use App\Http\Controllers\AvatarController;
 use App\Http\Controllers\GuestLocaleController;
-use App\Http\Controllers\Profile\LocaleController as ProfileLocaleController;
-use App\Http\Controllers\Profile\ProfileInformationController;
-use App\Http\Controllers\Profile\ProfilePhotoController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -24,20 +20,5 @@ Route::patch('/locale', [GuestLocaleController::class, 'set'])->name('locale.set
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::middleware('auth')->group(function () {
-    // Avatar proxy - serves images from RustFS (auth required)
-    Route::get('/avatars/{userId}', [AvatarController::class, 'show'])->name('avatar.show');
-    Route::get('/profile', [ProfileInformationController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileInformationController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileInformationController::class, 'destroy'])->name('profile.destroy');
-    Route::patch('/profile/locale', [ProfileLocaleController::class, 'update'])
-        ->name('profile.locale.update')
-        ->middleware(['auth', 'verified']);
-    Route::post('/profile/photo', [ProfilePhotoController::class, 'store'])
-        ->name('profile.photo.store');
-    Route::delete('/profile/photo', [ProfilePhotoController::class, 'destroy'])
-        ->name('profile.photo.destroy');
-});
 
 require __DIR__.'/system.php';
