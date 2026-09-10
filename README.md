@@ -17,6 +17,14 @@ Boilerplate para novos projetos Laravel com feature flags, RBAC, Redis, Horizon 
 
 Todos os serviços rodam via Docker Compose; nada disso precisa estar instalado localmente.
 
+## Arquitetura
+
+O código de domínio é organizado em módulos (`Modules/Identity`, `Profile`,
+`Presence`, `FeatureFlags`, `Permissions`), não num `app/` único — cada
+domínio tem seus próprios controllers, models, rotas, migrations e traduções,
+isolados dos demais. Para o mapa completo, os diagramas e como criar um
+módulo novo, veja [MODULES.md](MODULES.md).
+
 ## Criando um novo projeto
 
 Instale o instalador uma vez por máquina:
