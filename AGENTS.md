@@ -1,8 +1,10 @@
 # AGENTS.md
 
 Laravel 12 + Inertia/Vue 3 boilerplate. Postgres, Redis (cache, session, queue),
-Horizon, Reverb, RustFS, Pennant feature flags, Spatie RBAC. Everything runs in
-Docker Compose; nothing is installed on the host.
+Horizon, Reverb, RustFS, Pennant feature flags, Spatie RBAC. Domain code is
+organized into modules under `Modules/` (see "Modules" below) rather than a
+flat `app/`. Everything runs in Docker Compose; nothing is installed on the
+host.
 
 ## Commands
 
@@ -20,14 +22,15 @@ make octane-reload    # PHP changes need this; see below
 8000. Two consequences you must work with:
 
 - **Edited PHP is not picked up until workers reload.** Run `make octane-reload`
-  after changing anything under `app/`, `config/`, `routes/` or `bootstrap/`.
-  Blade and frontend assets are unaffected.
+  after changing anything under `app/`, `Modules/`, `config/`, `routes/` or
+  `bootstrap/`. Blade and frontend assets are unaffected. A newly
+  `composer require`-d package needs more than a reload — see Gotchas.
 - **The application instance outlives the request.** Anything you leave on it
   leaks into the next user's request in that worker: static properties,
   singletons holding request data, and globals like `App::setLocale()`. Set such
-  state per request or not at all. `routes/api_v1.php` applies
-  `SetLocaleMiddleware` for exactly this reason — a group that never sets a
-  locale inherits whatever the worker last used.
+  state per request or not at all. `Modules/FeatureFlags/routes/api.php`
+  applies `SetLocaleMiddleware` for exactly this reason — a group that never
+  sets a locale inherits whatever the worker last used.
 
 Pint has never been run over the whole tree. `./vendor/bin/pint app/` reformats
 ~24 untouched files and buries your diff. Always pass explicit paths.
@@ -37,12 +40,15 @@ Pint has never been run over the whole tree. `./vendor/bin/pint app/` reformats
 They answer different questions and do not substitute for each other.
 
 - **Feature flag** — does this capability exist for this user at all?
-  Register it in `config/features.php`, then put `feature:<name>` on the route
-  group. Controllers must not check flags themselves.
+  Register it in `Modules/FeatureFlags/config/config.php` (merged under both
+  the `featureflags` and `features` config keys — see the Modules section),
+  then put `feature:<name>` on the route group. Controllers must not check
+  flags themselves.
 - **RBAC** — inside a capability that exists, what may this user do?
   A Policy per model, permissions named `<resource>.{view,create,edit,delete}`,
-  seeded in `RolePermissionSeeder`. Note `edit`, not `update` — this matches
-  `usePermissions().canEdit()` on the frontend.
+  seeded in `Modules/Permissions/database/seeders/RolePermissionSeeder.php`.
+  Note `edit`, not `update` — this matches `usePermissions().canEdit()` on
+  the frontend.
 
 Two rules that are easy to get wrong:
 
@@ -50,8 +56,9 @@ Two rules that are easy to get wrong:
   `hasPermissionTo()`. Only the former honours `denied_permissions`, which lets
   an admin revoke one permission from one person without rebuilding their role.
 - `is_admin` bypasses RBAC, but **not** feature flags — except in
-  `FeatureServiceProvider::resolveFeature`, which exempts admins from flags
-  deliberately. Expect admins to keep access to a feature you switched off.
+  `Modules\FeatureFlags\Providers\FeatureFlagsServiceProvider::resolveFeature`,
+  which exempts admins from flags deliberately. Expect admins to keep access
+  to a feature you switched off.
 
 The frontend receives `activeFeatures` and `userPermissions` from
 `HandleInertiaRequests`. Gate nav links on both; gate buttons on a `can` array
@@ -66,8 +73,10 @@ the controller sends, so the UI never disagrees with the Policy.
   Reach for `app()` only where injection is impossible, such as middleware.
 - **Ids are KSUIDs.** Models `use HasKsuid`; migrations declare `char(*, 27)`,
   never `id()` or `foreignId()`.
-- **All user-facing strings** go through `__()` and exist in `lang/en.json`,
-  `lang/pt.json` and `lang/es.json`. Keys are the English sentence.
+- **All user-facing strings** go through `__()`. Keys are the English
+  sentence, living in the owning module's `lang/{en,pt,es}.json` — or root
+  `lang/{en,pt,es}.json` if 2+ modules share the literal string. See the
+  Modules section for how these get merged.
 - **Auth is stock Breeze.** Do not add bespoke steps. Admin-created users are
   invited by email to set their own password; `MustVerifyEmail` is off on
   purpose, since arriving via an emailed link already proves the address.
@@ -106,7 +115,8 @@ lines, place it above the code it explains, and write full sentences.
 
 ## Enums
 
-Any closed, fixed set of values — `app/Enums/*` — follows the same shape:
+Any closed, fixed set of values — `Modules/<Name>/app/Enums/*` — follows the
+same shape:
 
 - **Backed by `string`**, never `int`. A string value is self-documenting in
   the database and in API responses; an int forces a lookup to mean anything.
@@ -131,10 +141,90 @@ Any closed, fixed set of values — `app/Enums/*` — follows the same shape:
   app-level enum turns it into a one-line PHP change. `user_activities.
   activity_type` is a known exception, predating this convention — treat it
   as legacy, not as a pattern to repeat.
-- The frontend mirrors each enum as a hand-kept literal union
-  (`resources/js/types/user-status.ts`) — there is no codegen in this
-  template. Adding or renaming a case means updating that union too; nothing
-  will warn you if you forget.
+- The frontend mirrors each enum as a hand-kept literal union (e.g.
+  `Modules/Presence/resources/assets/js/types/user-status.ts`) — there is no
+  codegen in this template. Adding or renaming a case means updating that
+  union too; nothing will warn you if you forget.
+
+## Modules
+
+Domain code lives under `Modules/<Name>/`, one module per business domain
+(`Identity`, `Profile`, `Presence`, `FeatureFlags`, `Permissions`), managed by
+`nwidart/laravel-modules`. Each module mirrors the shape of root `app/` —
+`app/Http/Controllers`, `app/Models`, `app/Services`, and so on — plus its own
+`routes/`, `database/migrations`, `lang/`, `tests/`, and
+`resources/assets/js/Pages` for its Vue pages/components.
+
+**What stays in root `app/` instead of a module:** framework glue with no
+single domain owner — `HandleInertiaRequests`, `SetLocaleMiddleware`,
+`ShareTranslationsMiddleware`, the base `Controller` class, `HasKsuid`,
+`AppServiceProvider`, `HorizonServiceProvider`. If you're adding something
+used by exactly one domain, it's a module. If it's read or extended by every
+module, it's core — and core additions should be rare, since core is the one
+place every module-owner has to coordinate on.
+
+**The one sanctioned cross-module dependency**: every module may depend on
+`Identity` for the `User` model (`Modules\Identity\Models\User`) and on root
+`App\Traits\HasKsuid`. No other module-to-module dependency is allowed on the
+PHP side — if your feature needs another module's model or service, that's a
+sign either the boundary is wrong or the shared thing belongs in
+`Identity`/core instead. On the Vue side this is looser: core components
+(`AuthenticatedLayout.vue`) import module components via the `@modules`
+Vite alias, and one module's admin UI may read another module's exported
+composables/state for genuinely cross-cutting display concerns (Permissions'
+admin user list reading Presence's live online/offline state is the existing
+example) — that's a read-only frontend import, not a backend coupling, and is
+fine.
+
+**Routes**: each module's own `RouteServiceProvider` auto-loads its
+`routes/web.php`/`routes/api.php` — nothing to register in `bootstrap/app.php`
+for a new module's routes to work. If your routes file already declares its
+own full `Route::middleware([...])->group(...)` wrapper (the common case,
+since most of this app's route files do), override `map()` to
+`$this->loadRoutesFrom(...)` directly rather than accepting the package's
+default wrapper — the default re-wraps in `web`/`api` groups, which
+double-applies middleware if your file already declared them.
+
+**Translations**: each module owns `Modules/<Name>/lang/{en,pt,es}.json`.
+Laravel's translator merges every module's JSON file into one lookup keyed by
+the literal English sentence, so `__('Enable feature')` works exactly the
+same whether the key lives in root `lang/en.json` or
+`Modules/FeatureFlags/lang/en.json` — **no `module::key` syntax, ever**. Put a
+key in root `lang/*.json` only if 2+ modules use the identical literal
+string (`Save`, `Cancel`, generic validation messages); otherwise it belongs
+in the one module that uses it. Never let the same literal string exist in
+two different modules' JSON files with different translations — whichever
+module's provider boots last silently wins, and nothing will warn you.
+`ShareTranslationsMiddleware` hands this same merged set to the frontend as
+an Inertia prop; it does **not** get this for free from Laravel's translator
+(that middleware reads JSON files directly, for reasons unrelated to
+modules), so it explicitly merges root + every `Module::allEnabled()`
+module's `lang/{locale}.json` itself. If you ever change how translations
+are shared with the frontend, remember this second, independent merge point
+exists — it's not automatic just because `__()` works.
+`lang/_unused.{en,pt,es}.json` holds keys confirmed to have zero call sites
+anywhere in the app (leftover marketing copy from an earlier landing page) —
+excluded from every locale on purpose; don't revive it as a real locale file.
+
+**Scaffolding a new domain module:**
+
+```bash
+php artisan module:make <Name>
+```
+
+The generator scaffolds Blade/Mix-oriented defaults (its own `vite.config.js`,
+`resources/assets/js/app.js`, `resources/views/index.blade.php`) that this
+Inertia app doesn't use — delete those, keep `app/`, `routes/`, `database/`,
+`config/`, `composer.json`, `module.json`. Mirror `FeatureFlags` as the
+reference layout for everything else. Vue pages go under
+`resources/assets/js/Pages/` — they're picked up automatically by the glob in
+`resources/js/app.js` (and `ssr.js`), no Vite config change needed. If your
+module needs global middleware (a new `feature:`-style route guard, for
+example), the **class** lives in your module but its **registration** in
+`bootstrap/app.php`'s middleware stack/alias map is a core, append-only edit
+— that file is the one place cross-cutting request-lifecycle ordering
+decisions get made. Run `composer dump-autoload` after scaffolding (the
+merge-plugin picks up the new module's generated `composer.json`).
 
 ## Gotchas
 
@@ -160,3 +250,10 @@ Any closed, fixed set of values — `app/Enums/*` — follows the same shape:
   app`) leaves nginx pointed at a dead IP — 502 on every request even though
   `app` itself is healthy. Recreate `nginx` too (`docker compose up -d
   --force-recreate nginx`) whenever `app` gets a new container.
+- `composer require`-ing a new package while Octane is already running is not
+  picked up by `make octane-reload` — the worker's OPcache had the old
+  `vendor/composer/autoload_*.php` compiled in memory with timestamp
+  validation off, so it kept throwing "Class not found" for the new package
+  even after `composer dump-autoload` regenerated those files correctly on
+  disk. Needs a full `docker compose restart app`, same fix and same root
+  cause as the `RUSTFS_PUBLIC_URL` gotcha above.
