@@ -115,3 +115,8 @@ lines, place it above the code it explains, and write full sentences.
 - Host ports are `APP_PORT` / `DB_HOST_PORT` / `REDIS_HOST_PORT`, separate from
   the in-network `DB_PORT` / `REDIS_PORT`. Change the former on a port clash;
   changing the latter breaks the app's own connections.
+- nginx resolves the `app` upstream once at container start and caches that IP
+  for its lifetime. Recreating `app` alone (e.g. `docker compose up -d --build
+  app`) leaves nginx pointed at a dead IP — 502 on every request even though
+  `app` itself is healthy. Recreate `nginx` too (`docker compose up -d
+  --force-recreate nginx`) whenever `app` gets a new container.

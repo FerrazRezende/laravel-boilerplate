@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Storage;
 final class AvatarController extends Controller
 {
     /**
-     * Serve a user's avatar image from MinIO.
+     * Serve a user's avatar image from RustFS.
      */
     public function show(Request $request, string $userId): Response
     {
@@ -24,7 +24,7 @@ final class AvatarController extends Controller
             abort(404);
         }
 
-        $disk = Storage::disk('minio');
+        $disk = Storage::disk('rustfs');
 
         if (! $disk->exists($rawAvatar)) {
             abort(404);

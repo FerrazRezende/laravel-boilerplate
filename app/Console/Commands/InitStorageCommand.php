@@ -21,7 +21,7 @@ class InitStorageCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Initialize storage buckets (MinIO/S3)';
+    protected $description = 'Initialize storage buckets (RustFS/S3)';
 
     /**
      * Execute the console command.
@@ -30,7 +30,7 @@ class InitStorageCommand extends Command
     {
         $this->info('Initializing storage buckets...');
 
-        $bucket = config('filesystems.disks.minio.bucket');
+        $bucket = config('filesystems.disks.rustfs.bucket');
 
         if (! $bucket) {
             $this->error('Bucket name not configured.');
@@ -42,12 +42,12 @@ class InitStorageCommand extends Command
             // Create S3 client directly from config
             $client = new S3Client([
                 'version' => 'latest',
-                'region' => config('filesystems.disks.minio.region', 'us-east-1'),
-                'endpoint' => config('filesystems.disks.minio.endpoint'),
+                'region' => config('filesystems.disks.rustfs.region', 'us-east-1'),
+                'endpoint' => config('filesystems.disks.rustfs.endpoint'),
                 'use_path_style_endpoint' => true,
                 'credentials' => [
-                    'key' => config('filesystems.disks.minio.key'),
-                    'secret' => config('filesystems.disks.minio.secret'),
+                    'key' => config('filesystems.disks.rustfs.key'),
+                    'secret' => config('filesystems.disks.rustfs.secret'),
                 ],
             ]);
 

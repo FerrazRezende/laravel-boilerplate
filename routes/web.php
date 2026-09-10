@@ -26,7 +26,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    // Avatar proxy - serves images from MinIO (auth required)
+    // Avatar proxy - serves images from RustFS (auth required)
     Route::get('/avatars/{userId}', [AvatarController::class, 'show'])->name('avatar.show');
     Route::get('/profile', [ProfileInformationController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileInformationController::class, 'update'])->name('profile.update');

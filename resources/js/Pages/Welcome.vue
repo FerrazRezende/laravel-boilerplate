@@ -50,7 +50,7 @@ const stack = [
     { name: 'Redis', role: __('Cache & session store') },
     { name: 'Laravel Horizon', role: __('Job queue (Redis-backed)') },
     { name: 'Laravel Reverb', role: __('Realtime broadcasting') },
-    { name: 'MinIO', role: __('S3-compatible object storage') },
+    { name: 'RustFS', role: __('S3-compatible object storage') },
     { name: 'Laravel Pennant', role: __('Feature flags') },
     { name: 'Spatie Permission', role: __('Roles & permissions (RBAC)') },
 ];
@@ -79,7 +79,7 @@ const features = [
     {
         icon: Server,
         title: __('Object storage'),
-        description: __('MinIO, S3-compatible, for uploads and avatars.'),
+        description: __('RustFS, S3-compatible, for uploads and avatars.'),
     },
     {
         icon: Key,
@@ -94,7 +94,7 @@ const features = [
     {
         icon: Database,
         title: __('Fully containerized'),
-        description: __('Postgres, Redis, Horizon, MinIO and the app itself run from one docker-compose file.'),
+        description: __('Postgres, Redis, Horizon, RustFS and the app itself run from one docker-compose file.'),
     },
 ];
 </script>

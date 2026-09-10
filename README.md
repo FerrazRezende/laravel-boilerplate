@@ -1,6 +1,6 @@
 # Laravel Boilerplate
 
-Boilerplate para novos projetos Laravel com feature flags, RBAC, Redis, Horizon e MinIO já configurados.
+Boilerplate para novos projetos Laravel com feature flags, RBAC, Redis, Horizon e RustFS já configurados.
 
 ## Stack
 
@@ -10,7 +10,7 @@ Boilerplate para novos projetos Laravel com feature flags, RBAC, Redis, Horizon 
 - **Redis** para cache e sessão
 - **Redis + Laravel Horizon** para filas (dashboard em `/horizon`)
 - **Reverb** para broadcasting em tempo real
-- **MinIO** (S3-compatível) para armazenamento de arquivos
+- **RustFS** (S3-compatível) para armazenamento de arquivos
 - **Laravel Pennant** para feature flags
 - **Spatie Permission** para RBAC
 

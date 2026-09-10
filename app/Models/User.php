@@ -76,7 +76,7 @@ class User extends Authenticatable implements HasLocalePreference
         }
 
         // Serve avatar through the application proxy endpoint
-        // This avoids issues with MinIO presigned URL host mismatches
+        // This avoids issues with RustFS presigned URL host mismatches
         return url("/avatars/{$this->id}");
     }
 
