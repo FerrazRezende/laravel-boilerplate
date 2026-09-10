@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Modules\Permissions\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
+use Modules\Identity\Models\User;
 use Modules\Identity\Notifications\UserInvitation;
 use Modules\Permissions\Http\Requests\StoreUserRequest;
 use Modules\Permissions\Http\Requests\SyncDirectPermissionsRequest;

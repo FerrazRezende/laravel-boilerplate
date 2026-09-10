@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Modules\FeatureFlags\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Modules\FeatureFlags\Enums\RolloutStrategyEnum;
@@ -14,6 +13,7 @@ use Modules\FeatureFlags\Http\Requests\UpdateFeatureRequest;
 use Modules\FeatureFlags\Http\Resources\FeatureCollection;
 use Modules\FeatureFlags\Http\Resources\FeatureResource;
 use Modules\FeatureFlags\Services\FeatureFlagService;
+use Modules\Identity\Models\User;
 
 class FeatureFlagController extends Controller
 {

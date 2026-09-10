@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Modules\Profile\Services;
 
-use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Modules\Identity\Models\User;
 
 class ProfilePictureService
 {

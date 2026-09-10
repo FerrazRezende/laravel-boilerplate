@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Modules\Presence\Events;
 
-use App\Models\User;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Modules\Identity\Models\User;
 use Modules\Presence\Enums\UserStatusEnum;
 
 final class UserStatusUpdatedEvent implements ShouldBroadcast

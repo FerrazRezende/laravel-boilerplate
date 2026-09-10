@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Modules\Profile\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Modules\Identity\Models\User;
 
 final class AvatarController extends Controller
 {

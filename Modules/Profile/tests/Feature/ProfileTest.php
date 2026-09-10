@@ -2,8 +2,8 @@
 
 namespace Modules\Profile\Tests\Feature;
 
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Modules\Identity\Models\User;
 use Tests\TestCase;
 
 class ProfileTest extends TestCase

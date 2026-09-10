@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Modules\Permissions\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Modules\Identity\Models\User;
 
 class ImpersonateController extends Controller
 {

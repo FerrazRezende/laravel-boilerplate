@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Modules\FeatureFlags\Providers;
 
-use App\Models\User;
 use Carbon\Carbon;
 use Laravel\Pennant\Feature;
 use Modules\FeatureFlags\Enums\RolloutStrategyEnum;
 use Modules\FeatureFlags\Models\FeatureSetting;
+use Modules\Identity\Models\User;
 use Nwidart\Modules\Support\ModuleServiceProvider;
 
 class FeatureFlagsServiceProvider extends ModuleServiceProvider

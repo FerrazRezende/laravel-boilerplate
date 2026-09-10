@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Modules\FeatureFlags\Policies;
 
-use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Modules\Identity\Models\User;
 
 class FeaturePolicy
 {

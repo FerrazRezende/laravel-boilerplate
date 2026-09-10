@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Modules\Presence\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Modules\Identity\Models\User;
 use Modules\Presence\Enums\UserStatusEnum;
 use Modules\Presence\Events\UserStatusUpdatedEvent;
 use Modules\Presence\Services\UserActivityService;

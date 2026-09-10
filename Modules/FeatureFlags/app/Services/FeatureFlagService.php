@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Modules\FeatureFlags\Services;
 
-use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Laravel\Pennant\Feature;
@@ -12,6 +11,7 @@ use Modules\FeatureFlags\Enums\FeatureHistoryActionEnum;
 use Modules\FeatureFlags\Enums\RolloutStrategyEnum;
 use Modules\FeatureFlags\Models\FeatureHistory;
 use Modules\FeatureFlags\Models\FeatureSetting;
+use Modules\Identity\Models\User;
 
 class FeatureFlagService
 {

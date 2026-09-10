@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Modules\FeatureFlags\Tests\Feature;
 
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Route;
 use Laravel\Pennant\Feature;
 use Modules\FeatureFlags\Models\FeatureSetting;
 use Modules\FeatureFlags\Providers\FeatureFlagsServiceProvider;
 use Modules\FeatureFlags\Services\FeatureFlagService;
+use Modules\Identity\Models\User;
 use Tests\TestCase;
 
 class FeatureFlagTest extends TestCase

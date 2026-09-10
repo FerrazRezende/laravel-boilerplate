@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Modules\Presence\Services;
 
-use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Redis;
+use Modules\Identity\Models\User;
 use Modules\Presence\Enums\UserActivityTypeEnum;
 use Modules\Presence\Enums\UserStatusEnum;
 use Modules\Presence\Models\UserActivity;

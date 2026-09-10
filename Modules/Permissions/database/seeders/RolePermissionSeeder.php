@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Modules\Permissions\Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Seeder;
+use Modules\Identity\Models\User;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
