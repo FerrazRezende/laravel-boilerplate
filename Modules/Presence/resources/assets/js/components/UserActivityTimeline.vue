@@ -13,7 +13,7 @@ import {
   ArrowRightLeft,
   FileText,
 } from 'lucide-vue-next';
-import type { UserActivity, UserActivityType } from '@/types/user-status';
+import type { UserActivity, UserActivityType } from '../types/user-status';
 import { __ } from '@/utils/lang';
 
 interface Props {

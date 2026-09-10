@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Events;
+namespace Modules\Presence\Events;
 
-use App\Enums\UserStatusEnum;
 use App\Models\User;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Modules\Presence\Enums\UserStatusEnum;
 
 final class UserStatusUpdatedEvent implements ShouldBroadcast
 {
@@ -44,7 +44,7 @@ final class UserStatusUpdatedEvent implements ShouldBroadcast
             'status_label' => $this->status->label(),
             'status_color' => $this->status->color(),
             'message' => $this->message,
-            'avatar_url' => $this->user->avatar_url,
+            'avatar_url' => $this->user->avatar,
             'updated_at' => $this->user->updated_at->toIso8601String(),
         ];
     }

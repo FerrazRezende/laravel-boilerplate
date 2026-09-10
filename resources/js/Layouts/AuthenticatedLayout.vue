@@ -2,7 +2,7 @@
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import { Button } from '@/components/ui/button';
 import NotificationCenter from '@modules/Identity/resources/assets/js/components/NotificationCenter.vue';
-import StatusPickerDropdown from '@/components/user/StatusPickerDropdown.vue';
+import StatusPickerDropdown from '@modules/Presence/resources/assets/js/components/StatusPickerDropdown.vue';
 import {
     Sun,
     Moon,
@@ -15,12 +15,12 @@ import ImpersonateBanner from '@/components/ImpersonateBanner.vue';
 import { useDarkMode } from '@/composables/useDarkMode';
 import { useLang, __ } from '@/composables/useLang';
 import { usePermissions } from '@/composables/usePermissions';
-import { useUserStatus } from '@/composables/useUserStatus';
-import { ensureOnlinePresenceJoined } from '@/composables/useOnlinePresence';
-import { ensureIdleAwayWatching } from '@/composables/useIdleAway';
+import { useUserStatus } from '@modules/Presence/resources/assets/js/composables/useUserStatus';
+import { ensureOnlinePresenceJoined } from '@modules/Presence/resources/assets/js/composables/useOnlinePresence';
+import { ensureIdleAwayWatching } from '@modules/Presence/resources/assets/js/composables/useIdleAway';
 import { navigation, type NavItem } from '@/lib/navigation';
 import { ref, computed, onMounted, onUnmounted } from 'vue';
-import type { UserStatus } from '@/types/user-status';
+import type { UserStatus } from '@modules/Presence/resources/assets/js/types/user-status';
 
 const { setStatus, refreshStatus, currentStatus } = useUserStatus();
 

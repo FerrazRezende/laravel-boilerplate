@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Modules\Profile\Http\Resources;
 
-use App\Services\UserStatusService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Laravel\Pennant\Feature;
+use Modules\Presence\Services\UserStatusService;
 
 class UserProfileResource extends JsonResource
 {

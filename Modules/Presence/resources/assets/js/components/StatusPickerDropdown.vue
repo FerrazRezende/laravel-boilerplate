@@ -13,8 +13,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Settings, Circle, Loader2 } from 'lucide-vue-next';
-import { useUserStatus } from '@/composables/useUserStatus';
-import type { UserStatus } from '@/types/user-status';
+import { useUserStatus } from '../composables/useUserStatus';
+import type { UserStatus } from '../types/user-status';
 import { __ } from '@/utils/lang';
 
 interface Props {

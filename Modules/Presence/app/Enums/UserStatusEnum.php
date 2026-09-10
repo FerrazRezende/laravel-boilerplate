@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Enums;
+namespace Modules\Presence\Enums;
 
 enum UserStatusEnum: string
 {

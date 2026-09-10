@@ -19,10 +19,10 @@ import { ArrowLeft, Shield, ShieldCheck, Key, Loader2, Activity, User } from 'lu
 import PvTabs from '@/components/ui/pv-tabs/PvTabs.vue';
 import PvTabsContent from '@/components/ui/pv-tabs/PvTabsContent.vue';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import UserActivityTimeline from '@/components/user/UserActivityTimeline.vue';
-import { useEchoChannels } from '@/composables/useEchoChannels';
-import { onlineUserIds } from '@/composables/useOnlinePresence';
-import type { UserActivity, UserActivityCollection, UserStatus, UserStatusChangedEvent } from '@/types/user-status';
+import UserActivityTimeline from '@modules/Presence/resources/assets/js/components/UserActivityTimeline.vue';
+import { useEchoChannels } from '@modules/Presence/resources/assets/js/composables/useEchoChannels';
+import { onlineUserIds } from '@modules/Presence/resources/assets/js/composables/useOnlinePresence';
+import type { UserActivity, UserActivityCollection, UserStatus, UserStatusChangedEvent } from '@modules/Presence/resources/assets/js/types/user-status';
 import axios from 'axios';
 
 interface Role {

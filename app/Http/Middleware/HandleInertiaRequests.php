@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Http\Middleware;
 
 use App\Models\User;
-use Modules\FeatureFlags\Services\FeatureFlagService;
-use App\Services\UserStatusService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
 use Inertia\Middleware;
+use Modules\FeatureFlags\Services\FeatureFlagService;
+use Modules\Presence\Services\UserStatusService;
 use Tighten\Ziggy\Ziggy;
 
 class HandleInertiaRequests extends Middleware

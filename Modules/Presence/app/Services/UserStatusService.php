@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Services;
+namespace Modules\Presence\Services;
 
-use App\Enums\UserStatusEnum;
 use App\Models\User;
 use Illuminate\Support\Facades\Redis;
+use Modules\Presence\Enums\UserStatusEnum;
 
 /**
  * Persists the status a user explicitly chose (online/away/busy/offline via

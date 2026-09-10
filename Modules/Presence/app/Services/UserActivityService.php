@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Services;
+namespace Modules\Presence\Services;
 
-use App\Enums\UserActivityTypeEnum;
-use App\Enums\UserStatusEnum;
 use App\Models\User;
-use App\Models\UserActivity;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Redis;
+use Modules\Presence\Enums\UserActivityTypeEnum;
+use Modules\Presence\Enums\UserStatusEnum;
+use Modules\Presence\Models\UserActivity;
 
 final readonly class UserActivityService
 {

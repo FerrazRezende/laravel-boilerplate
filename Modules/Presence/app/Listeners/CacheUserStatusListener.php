@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Listeners;
+namespace Modules\Presence\Listeners;
 
-use App\Events\UserStatusUpdatedEvent;
-use App\Services\UserStatusService;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Modules\Presence\Events\UserStatusUpdatedEvent;
+use Modules\Presence\Services\UserStatusService;
 
 final class CacheUserStatusListener implements ShouldQueue
 {

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\System;
 
-use App\Services\UserStatusService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Modules\Presence\Services\UserStatusService;
 
 class SystemUserResource extends JsonResource
 {

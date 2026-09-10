@@ -2,16 +2,17 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers;
+namespace Modules\Presence\Http\Controllers;
 
-use App\Enums\UserStatusEnum;
-use App\Events\UserStatusUpdatedEvent;
+use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Services\UserActivityService;
-use App\Services\UserStatusService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Modules\Presence\Enums\UserStatusEnum;
+use Modules\Presence\Events\UserStatusUpdatedEvent;
+use Modules\Presence\Services\UserActivityService;
+use Modules\Presence\Services\UserStatusService;
 
 final class UserStatusController extends Controller
 {

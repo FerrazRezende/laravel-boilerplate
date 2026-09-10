@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue';
 import type { UserStatus, UserStatusWithMeta } from '../types/user-status';
-import { __ } from './useLang';
+import { __ } from '@/composables/useLang';
 
 // Module-level singleton state: every caller (layout, status dropdown, idle-away
 // watcher) must see the same status, or they drift out of sync with each other

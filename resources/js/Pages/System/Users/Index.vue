@@ -37,10 +37,10 @@ import {
     Plus,
     Search,
 } from 'lucide-vue-next';
-import UserAvatarWithStatus from '@/components/user/UserAvatarWithStatus.vue';
-import { useEchoChannels } from '@/composables/useEchoChannels';
-import { onlineUserIds } from '@/composables/useOnlinePresence';
-import type { UserStatusChangedEvent, UserStatus } from '@/types/user-status';
+import UserAvatarWithStatus from '@modules/Presence/resources/assets/js/components/UserAvatarWithStatus.vue';
+import { useEchoChannels } from '@modules/Presence/resources/assets/js/composables/useEchoChannels';
+import { onlineUserIds } from '@modules/Presence/resources/assets/js/composables/useOnlinePresence';
+import type { UserStatusChangedEvent, UserStatus } from '@modules/Presence/resources/assets/js/types/user-status';
 
 interface Role {
     id: number;

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Middleware;
+namespace Modules\Presence\Http\Middleware;
 
-use App\Services\UserActivityService;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Modules\Presence\Services\UserActivityService;
 use Symfony\Component\HttpFoundation\Response;
 
 final class TrackUserPresence

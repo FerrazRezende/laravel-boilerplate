@@ -5,12 +5,12 @@ use App\Http\Middleware\HandleImpersonation;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\SetLocaleMiddleware;
 use App\Http\Middleware\ShareTranslationsMiddleware;
-use App\Http\Middleware\TrackUserPresence;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
 use Modules\FeatureFlags\Http\Middleware\EnsureFeatureIsEnabled;
+use Modules\Presence\Http\Middleware\TrackUserPresence;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -18,10 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         channels: __DIR__.'/../routes/channels.php',
         health: '/up',
-        then: fn () => collect([
-            __DIR__.'/../routes/system.php',
-            __DIR__.'/../routes/api.php',
-        ])->each(fn ($path) => require $path),
+        then: fn () => require __DIR__.'/../routes/system.php',
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [

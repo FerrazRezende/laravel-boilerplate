@@ -8,7 +8,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import type { UserStatus } from '@/types/user-status';
+import type { UserStatus } from '../types/user-status';
 import { __ } from '@/utils/lang';
 
 interface Props {
