@@ -20,5 +20,3 @@ Route::patch('/locale', [GuestLocaleController::class, 'set'])->name('locale.set
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
-
-require __DIR__.'/system.php';

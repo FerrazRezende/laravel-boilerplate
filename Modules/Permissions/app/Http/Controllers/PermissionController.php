@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\System;
+namespace Modules\Permissions\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\System\PermissionResource;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Modules\Permissions\Http\Resources\PermissionResource;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -30,7 +30,7 @@ class PermissionController extends Controller
             return PermissionResource::collection($permissions);
         }
 
-        return Inertia::render('System/Permissions/Index', [
+        return Inertia::render('Permissions/Index', [
             'permissions' => $permissions->items(),
             'roles' => $roles->items(),
         ]);

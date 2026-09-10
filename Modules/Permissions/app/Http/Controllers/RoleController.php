@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\System;
+namespace Modules\Permissions\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\System\StoreRoleRequest;
-use App\Http\Requests\System\SyncRolePermissionsRequest;
-use App\Http\Requests\System\UpdateRoleRequest;
-use App\Http\Resources\System\RoleResource;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Modules\Permissions\Http\Requests\StoreRoleRequest;
+use Modules\Permissions\Http\Requests\SyncRolePermissionsRequest;
+use Modules\Permissions\Http\Requests\UpdateRoleRequest;
+use Modules\Permissions\Http\Resources\RoleResource;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -23,7 +23,7 @@ class RoleController extends Controller
     {
         abort_unless($request->user()->is_admin, 403);
 
-        return Inertia::render('System/Roles/Form', [
+        return Inertia::render('Roles/Form', [
             'allPermissions' => Permission::orderBy('name')->get(['id', 'name', 'guard_name']),
         ]);
     }
@@ -37,7 +37,7 @@ class RoleController extends Controller
 
         $role->load('permissions');
 
-        return Inertia::render('System/Roles/Form', [
+        return Inertia::render('Roles/Form', [
             'role' => [
                 'id' => $role->id,
                 'name' => $role->name,

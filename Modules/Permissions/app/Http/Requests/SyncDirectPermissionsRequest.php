@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\System;
+namespace Modules\Permissions\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class SyncUserPermissionsRequest extends FormRequest
+class SyncDirectPermissionsRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -16,10 +16,10 @@ class SyncUserPermissionsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'roles' => ['nullable', 'array'],
-            'roles.*' => ['integer', 'exists:roles,id'],
             'permissions' => ['nullable', 'array'],
             'permissions.*' => ['integer', 'exists:permissions,id'],
+            'denied_permissions' => ['nullable', 'array'],
+            'denied_permissions.*' => ['integer', 'exists:permissions,id'],
         ];
     }
 }

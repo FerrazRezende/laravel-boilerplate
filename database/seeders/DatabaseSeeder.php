@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Modules\Identity\Database\Seeders\UserSeeder;
+use Modules\Permissions\Database\Seeders\RolePermissionSeeder;
 
 class DatabaseSeeder extends Seeder
 {

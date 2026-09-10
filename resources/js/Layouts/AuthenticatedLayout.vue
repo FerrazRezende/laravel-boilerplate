@@ -11,7 +11,7 @@ import {
     PanelLeft,
     Layers,
 } from 'lucide-vue-next';
-import ImpersonateBanner from '@/components/ImpersonateBanner.vue';
+import ImpersonateBanner from '@modules/Permissions/resources/assets/js/components/ImpersonateBanner.vue';
 import { useDarkMode } from '@/composables/useDarkMode';
 import { useLang, __ } from '@/composables/useLang';
 import { usePermissions } from '@/composables/usePermissions';
