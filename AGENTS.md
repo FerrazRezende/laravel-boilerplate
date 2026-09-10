@@ -138,9 +138,7 @@ same shape:
   someone reads it back.
 - **Migrations declare `string`, not a native DB `enum` column.** A native
   enum turns "add a case" into a schema migration; a string column with an
-  app-level enum turns it into a one-line PHP change. `user_activities.
-  activity_type` is a known exception, predating this convention — treat it
-  as legacy, not as a pattern to repeat.
+  app-level enum turns it into a one-line PHP change.
 - The frontend mirrors each enum as a hand-kept literal union (e.g.
   `Modules/Presence/resources/assets/js/types/user-status.ts`) — there is no
   codegen in this template. Adding or renaming a case means updating that

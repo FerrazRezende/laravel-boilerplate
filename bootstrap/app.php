@@ -9,7 +9,6 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
 use Modules\FeatureFlags\Http\Middleware\EnsureFeatureIsEnabled;
 use Modules\Permissions\Http\Middleware\CheckDeniedPermissions;
-use Modules\Permissions\Http\Middleware\HandleImpersonation;
 use Modules\Presence\Http\Middleware\TrackUserPresence;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -25,14 +24,12 @@ return Application::configure(basePath: dirname(__DIR__))
             SetLocaleMiddleware::class,
             ShareTranslationsMiddleware::class,
             AddLinkHeadersForPreloadedAssets::class,
-            HandleImpersonation::class,
             CheckDeniedPermissions::class,
             TrackUserPresence::class,
         ]);
 
         $middleware->alias([
             'feature' => EnsureFeatureIsEnabled::class,
-            'impersonate' => HandleImpersonation::class,
             'denied.check' => CheckDeniedPermissions::class,
         ]);
     })

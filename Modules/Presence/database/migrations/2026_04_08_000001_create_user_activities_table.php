@@ -5,7 +5,6 @@ declare(strict_types=1);
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Modules\Presence\Enums\UserActivityTypeEnum;
 
 return new class extends Migration
 {
@@ -14,12 +13,7 @@ return new class extends Migration
         Schema::create('user_activities', function (Blueprint $table) {
             $table->char('id', 27)->primary();
             $table->char('user_id', 27);
-            $table->enum('activity_type', [
-                UserActivityTypeEnum::STATUS_CHANGED->value,
-                UserActivityTypeEnum::DATABASE_CREATED->value,
-                UserActivityTypeEnum::CREDENTIAL_CREATED->value,
-                UserActivityTypeEnum::PAGE_VIEW->value,
-            ]);
+            $table->string('activity_type', 30);
             $table->string('from_status', 20)->nullable();
             $table->string('to_status', 20)->nullable();
             $table->json('metadata')->nullable();

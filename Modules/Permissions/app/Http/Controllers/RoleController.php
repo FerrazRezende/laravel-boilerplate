@@ -51,28 +51,6 @@ class RoleController extends Controller
     }
 
     /**
-     * Display a listing of roles.
-     */
-    public function index(Request $request)
-    {
-        abort_unless($request->user()->is_admin, 403);
-
-        $roles = Role::with('permissions')
-            ->withCount('users')
-            ->orderBy('name')
-            ->paginate(50);
-
-        if ($request->wantsJson()) {
-            return RoleResource::collection($roles);
-        }
-
-        return Inertia::render('System/Roles/Index', [
-            'roles' => RoleResource::collection($roles)->toArray($request),
-            'permissions' => Permission::orderBy('name')->get(['id', 'name']),
-        ]);
-    }
-
-    /**
      * Store a newly created role.
      */
     public function store(StoreRoleRequest $request)

@@ -8,6 +8,7 @@ use App\Traits\HasKsuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Modules\Identity\Models\User;
 use Modules\Presence\Enums\UserActivityTypeEnum;
 use Modules\Presence\Enums\UserStatusEnum;
 
