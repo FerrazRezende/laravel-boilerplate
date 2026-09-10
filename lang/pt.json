@@ -587,5 +587,6 @@
     "Set my password": "Definir minha senha",
     "This invitation link expires in :count minutes.": "Este link de convite expira em :count minutos.",
     "If you were not expecting this invitation, you can safely ignore this email.": "Se você não esperava este convite, pode ignorar este e-mail com segurança.",
-    "If you are having trouble clicking the button, copy and paste the URL below into your browser:": "Se você estiver com problemas para clicar no botão, copie e cole a URL abaixo no seu navegador:"
+    "If you are having trouble clicking the button, copy and paste the URL below into your browser:": "Se você estiver com problemas para clicar no botão, copie e cole a URL abaixo no seu navegador:",
+    "Sortable, URL-safe primary keys": "Chaves primárias ordenáveis e seguras para URLs"
 }

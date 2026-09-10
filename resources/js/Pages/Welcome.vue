@@ -53,6 +53,7 @@ const stack = [
     { name: 'RustFS', role: __('S3-compatible object storage') },
     { name: 'Laravel Pennant', role: __('Feature flags') },
     { name: 'Spatie Permission', role: __('Roles & permissions (RBAC)') },
+    { name: 'KSUID', role: __('Sortable, URL-safe primary keys') },
 ];
 
 const features = [

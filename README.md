@@ -13,6 +13,7 @@ Boilerplate para novos projetos Laravel com feature flags, RBAC, Redis, Horizon 
 - **RustFS** (S3-compatível) para armazenamento de arquivos
 - **Laravel Pennant** para feature flags
 - **Spatie Permission** para RBAC
+- **KSUIDs** como chave primária de todos os models (27 caracteres, ordenáveis por data de criação, seguros para expor em URLs — em vez de inteiros auto-incrementais)
 
 Todos os serviços rodam via Docker Compose; nada disso precisa estar instalado localmente.
 
