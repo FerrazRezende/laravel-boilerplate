@@ -216,6 +216,11 @@ export function useEchoChannels() {
     }
   }
 
+  // Joining 'online-users' lives in useOnlinePresence.ts, not here: it needs
+  // to happen exactly once per browser session (see that file for why), which
+  // a method on this factory — called fresh by every component instance —
+  // cannot guarantee on its own.
+
   return {
     isConnected,
     connectionState,

@@ -1,59 +1,24 @@
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed } from 'vue';
 import type { UserStatus, UserStatusWithMeta } from '../types/user-status';
 import { __ } from './useLang';
 
-/** Heartbeat interval in milliseconds (2 minutes) */
-const HEARTBEAT_INTERVAL_MS = 2 * 60 * 1000;
+// Module-level singleton state: every caller (layout, status dropdown, idle-away
+// watcher) must see the same status, or they drift out of sync with each other
+// across the layout's per-navigation remounts. See useOnlinePresence.ts for the
+// same pattern applied to presence membership.
+const currentStatus = ref<UserStatus>('online');
+const isLoading = ref(false);
+const error = ref<string | null>(null);
 
 /**
  * User Status Composable
  *
- * Provides reactive user status management with API integration.
- * Handles status updates, loading states, heartbeat pings, and translations.
+ * Provides reactive user status management with API integration: the status
+ * a user explicitly chose (online/away/busy/offline). Whether they're
+ * actually connected right now is a separate question, answered live by the
+ * 'online-users' presence channel in useEchoChannels — not by anything here.
  */
 export function useUserStatus() {
-  const currentStatus = ref<UserStatus>('online');
-  const isLoading = ref(false);
-  const error = ref<string | null>(null);
-  let heartbeatTimer: ReturnType<typeof setInterval> | null = null;
-
-  /**
-   * Send a heartbeat ping to keep the user marked as online.
-   * Uses a lightweight endpoint that only refreshes the Redis heartbeat key.
-   */
-  const sendHeartbeat = async (): Promise<void> => {
-    try {
-      await fetch('/api/user/heartbeat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
-          'Accept': 'application/json',
-        },
-      });
-    } catch {
-      // Heartbeat failures are non-critical; ignore silently
-    }
-  };
-
-  /**
-   * Start periodic heartbeat pings.
-   */
-  const startHeartbeat = (): void => {
-    if (heartbeatTimer !== null) return;
-    heartbeatTimer = setInterval(sendHeartbeat, HEARTBEAT_INTERVAL_MS);
-  };
-
-  /**
-   * Stop periodic heartbeat pings.
-   */
-  const stopHeartbeat = (): void => {
-    if (heartbeatTimer !== null) {
-      clearInterval(heartbeatTimer);
-      heartbeatTimer = null;
-    }
-  };
-
   /**
    * Get translated label for the current status
    */
@@ -159,13 +124,12 @@ export function useUserStatus() {
   };
 
   /**
-   * Initialize status from page props if available and start heartbeat
+   * Initialize status from page props if available.
    */
   const initializeStatus = (initialStatus?: UserStatus) => {
     if (initialStatus) {
       currentStatus.value = initialStatus;
     }
-    startHeartbeat();
   };
 
   return {
@@ -184,8 +148,5 @@ export function useUserStatus() {
     clearStatus,
     refreshStatus,
     initializeStatus,
-    startHeartbeat,
-    stopHeartbeat,
-    sendHeartbeat,
   };
 }

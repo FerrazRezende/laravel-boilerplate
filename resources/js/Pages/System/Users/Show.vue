@@ -21,6 +21,7 @@ import PvTabsContent from '@/components/ui/pv-tabs/PvTabsContent.vue';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import UserActivityTimeline from '@/components/user/UserActivityTimeline.vue';
 import { useEchoChannels } from '@/composables/useEchoChannels';
+import { onlineUserIds } from '@/composables/useOnlinePresence';
 import type { UserActivity, UserActivityCollection, UserStatus, UserStatusChangedEvent } from '@/types/user-status';
 import axios from 'axios';
 
@@ -82,6 +83,15 @@ const isSavingPermissions = ref(false);
 // User status - reactive for real-time updates
 const userStatus = ref<UserStatus>(props.user.status || 'offline');
 
+// Joined once for the whole session (see useOnlinePresence.ts) by
+// AuthenticatedLayout and only read here — this page must never join/leave
+// 'online-users' itself, since it's a shared channel.
+const isOnline = computed(() => onlineUserIds.has(String(props.user.id)));
+
+// A user not currently connected is offline regardless of the status they
+// last chose before disconnecting.
+const effectiveStatus = computed<UserStatus>(() => (isOnline.value ? userStatus.value : 'offline'));
+
 const statusRingColor = computed(() => {
   const colors: Record<UserStatus, string> = {
     online: 'ring-green-500',
@@ -89,16 +99,18 @@ const statusRingColor = computed(() => {
     busy: 'ring-red-500',
     offline: 'ring-gray-300',
   };
-  return colors[userStatus.value] || colors.offline;
+  return colors[effectiveStatus.value] || colors.offline;
 });
 
 // WebSocket for real-time status of the viewed user
-const { connect, listenToPresenceChannel, disconnect } = useEchoChannels();
+const { connect, listenToPresenceChannel } = useEchoChannels();
+
+let stopListeningToPresence: (() => void) | null = null;
 
 onMounted(async () => {
   try {
     await connect();
-    listenToPresenceChannel((event: UserStatusChangedEvent) => {
+    stopListeningToPresence = listenToPresenceChannel((event: UserStatusChangedEvent) => {
       if (String(event.user_id) === String(props.user.id)) {
         userStatus.value = event.status as UserStatus;
       }
@@ -109,11 +121,7 @@ onMounted(async () => {
 });
 
 onUnmounted(() => {
-  try {
-    disconnect();
-  } catch {
-    // Ignore
-  }
+  stopListeningToPresence?.();
 });
 
 // Activities state

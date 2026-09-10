@@ -39,6 +39,7 @@ import {
 } from 'lucide-vue-next';
 import UserAvatarWithStatus from '@/components/user/UserAvatarWithStatus.vue';
 import { useEchoChannels } from '@/composables/useEchoChannels';
+import { onlineUserIds } from '@/composables/useOnlinePresence';
 import type { UserStatusChangedEvent, UserStatus } from '@/types/user-status';
 
 interface Role {
@@ -77,7 +78,7 @@ const selectedUserId = ref<number | null>(null);
 const selectedUserName = ref('');
 
 // Local reactive status map for real-time updates
-const userStatuses = ref<Record<number, UserStatus>>({});
+const userStatuses = ref<Record<string, UserStatus>>({});
 
 // Initialize statuses from props
 if (props.users) {
@@ -89,16 +90,18 @@ if (props.users) {
 }
 
 // WebSocket connection for real-time status updates
-const { connect, listenToPresenceChannel, disconnect } = useEchoChannels();
+const { connect, listenToPresenceChannel } = useEchoChannels();
+
+let stopListeningToPresence: (() => void) | null = null;
 
 // Connect to WebSocket and listen for status updates
 onMounted(async () => {
     try {
         await connect();
 
-        // Listen to global presence channel for all status updates
-        listenToPresenceChannel((event: UserStatusChangedEvent) => {
-            const userId = Number(event.user_id);
+        // Listen to global presence channel for explicit status changes
+        stopListeningToPresence = listenToPresenceChannel((event: UserStatusChangedEvent) => {
+            const userId = event.user_id;
             if (userStatuses.value[userId] !== undefined) {
                 userStatuses.value[userId] = event.status as UserStatus;
             }
@@ -109,13 +112,8 @@ onMounted(async () => {
     }
 });
 
-// Cleanup WebSocket connection on unmount
 onUnmounted(() => {
-    try {
-        disconnect();
-    } catch (error) {
-        console.error('[Users/Index] Error disconnecting WebSocket:', error);
-    }
+    stopListeningToPresence?.();
 });
 
 // Form state
@@ -219,11 +217,17 @@ const confirmDeactivate = (): void => {
 };
 
 /**
- * Get user status from local reactive state
- * Defaults to 'offline' if not set
+ * A user not present in the live 'online-users' presence channel is offline,
+ * full stop — regardless of what status they last explicitly chose before
+ * disconnecting. Only for someone actually connected does their chosen status
+ * (online/away/busy) matter.
  */
 const getUserStatus = (userId: number): UserStatus => {
-    return userStatuses.value[userId] || 'offline';
+    if (!onlineUserIds.has(String(userId))) {
+        return 'offline';
+    }
+
+    return userStatuses.value[userId] || 'online';
 };
 </script>
 

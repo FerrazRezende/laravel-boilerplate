@@ -1,6 +1,5 @@
 <?php
 
-use App\Console\Commands\CleanupOldActivities;
 use App\Http\Middleware\CheckDeniedPermissions;
 use App\Http\Middleware\EnsureFeatureIsEnabled;
 use App\Http\Middleware\HandleImpersonation;
@@ -17,9 +16,6 @@ use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
 return Application::configure(basePath: dirname(__DIR__))
     ->withProviders([
         FeatureServiceProvider::class,
-    ])
-    ->withCommands([
-        CleanupOldActivities::class,
     ])
     ->withRouting(
         web: __DIR__.'/../routes/web.php',

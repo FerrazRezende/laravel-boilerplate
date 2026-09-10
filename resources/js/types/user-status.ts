@@ -12,8 +12,9 @@
 export type UserStatus = 'online' | 'away' | 'busy' | 'offline';
 
 /**
- * User status with metadata from Redis
- * Returns null if user is offline/inactive
+ * The status a user explicitly chose, with metadata from Redis. Says nothing
+ * about whether they're currently connected — that's answered live by the
+ * 'online-users' presence channel in useEchoChannels, not stored here.
  *
  * @see UserStatusService::getStatusWithMetadata()
  */
@@ -22,8 +23,6 @@ export interface UserStatusWithMeta {
   status: UserStatus;
   /** ISO 8601 timestamp of when status was last updated */
   updated_at: string;
-  /** ISO 8601 timestamp of last heartbeat (max 2 minutes ago) */
-  heartbeat: string;
 }
 
 /**
@@ -86,27 +85,6 @@ export interface UserActivityCollection {
 }
 
 /**
- * Real-time user presence data for WebSocket broadcasts
- * Used in Echo presence channels
- */
-export interface UserPresence {
-  /** User ID (KSUID) */
-  id: string;
-  /** User display name */
-  name: string;
-  /** User email */
-  email: string | null;
-  /** User avatar URL */
-  avatar: string | null;
-  /** Current status */
-  status: UserStatus;
-  /** ISO 8601 timestamp of last status update */
-  updated_at: string;
-  /** ISO 8601 timestamp of last heartbeat */
-  heartbeat: string;
-}
-
-/**
  * Multiple user statuses indexed by user ID
  * Returns array where key is user ID and value is status
  *
@@ -144,5 +122,5 @@ export interface UserStatusChangedEvent {
  * Provides convenient access via UserStatus.* syntax
  */
 export namespace UserStatusTypes {
-  export type { UserStatus, UserStatusWithMeta, UserActivity, UserActivityType, UserActivityMetadata, UserActivityCollection, UserPresence, UserStatusMap, UserStatusChangedEvent };
+  export type { UserStatus, UserStatusWithMeta, UserActivity, UserActivityType, UserActivityMetadata, UserActivityCollection, UserStatusMap, UserStatusChangedEvent };
 }

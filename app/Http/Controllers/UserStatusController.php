@@ -29,31 +29,14 @@ final class UserStatusController extends Controller
         $statusWithMeta = $this->statusService->getStatusWithMetadata($user->id);
 
         if ($statusWithMeta === null) {
-            // User is offline/inactive
+            // No status explicitly chosen yet
             return response()->json([
-                'status' => 'offline',
+                'status' => 'online',
                 'updated_at' => now()->toIso8601String(),
-                'heartbeat' => now()->toIso8601String(),
             ]);
         }
 
         return response()->json($statusWithMeta);
-    }
-
-    /**
-     * Send a heartbeat ping to keep the user marked as online.
-     */
-    public function heartbeat(Request $request): JsonResponse
-    {
-        /** @var User $user */
-        $user = $request->user();
-
-        $this->statusService->updateHeartbeat($user);
-
-        return response()->json([
-            'status' => 'ok',
-            'heartbeat' => now()->toIso8601String(),
-        ]);
     }
 
     /**
@@ -95,7 +78,6 @@ final class UserStatusController extends Controller
         return response()->json([
             'status' => $statusEnum->value,
             'updated_at' => now()->toIso8601String(),
-            'heartbeat' => now()->toIso8601String(),
         ]);
     }
 }

@@ -16,6 +16,8 @@ import { useDarkMode } from '@/composables/useDarkMode';
 import { useLang, __ } from '@/composables/useLang';
 import { usePermissions } from '@/composables/usePermissions';
 import { useUserStatus } from '@/composables/useUserStatus';
+import { ensureOnlinePresenceJoined } from '@/composables/useOnlinePresence';
+import { ensureIdleAwayWatching } from '@/composables/useIdleAway';
 import { navigation, type NavItem } from '@/lib/navigation';
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import type { UserStatus } from '@/types/user-status';
@@ -28,6 +30,14 @@ const { setStatus, refreshStatus, currentStatus } = useUserStatus();
 const hasInitialized = ref(false);
 
 onMounted(async () => {
+  // This layout is a component wrapped inside every page rather than an
+  // Inertia persistent layout, so it remounts on every navigation. Joining
+  // here is safe to repeat: it's a one-time-per-session no-op after the
+  // first call — see useOnlinePresence.ts for why it has to be guarded there
+  // rather than by anything Vue's lifecycle gives us.
+  ensureOnlinePresenceJoined();
+  ensureIdleAwayWatching();
+
   if (!hasInitialized.value) {
     hasInitialized.value = true;
     await refreshStatus();
