@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Middleware;
 
 use App\Models\User;
-use App\Services\FeatureFlagService;
+use Modules\FeatureFlags\Services\FeatureFlagService;
 use App\Services\UserStatusService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;

@@ -1,0 +1,7 @@
+{
+    "Identity": true,
+    "Profile": true,
+    "Presence": true,
+    "FeatureFlags": true,
+    "Permissions": true
+}

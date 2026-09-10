@@ -15,7 +15,10 @@ createServer((page) =>
         resolve: (name) =>
             resolvePageComponent(
                 `./Pages/${name}.vue`,
-                import.meta.glob('./Pages/**/*.vue'),
+                {
+                    ...import.meta.glob('./Pages/**/*.vue'),
+                    ...import.meta.glob('/Modules/*/resources/assets/js/Pages/**/*.vue'),
+                },
             ),
         setup({ App, props, plugin }) {
             return createSSRApp({ render: () => h(App, props) })

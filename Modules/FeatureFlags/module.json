@@ -1,0 +1,11 @@
+{
+    "name": "FeatureFlags",
+    "alias": "featureflags",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\FeatureFlags\\Providers\\FeatureFlagsServiceProvider"
+    ],
+    "files": []
+}

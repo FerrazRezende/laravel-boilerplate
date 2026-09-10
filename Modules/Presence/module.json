@@ -1,0 +1,11 @@
+{
+    "name": "Presence",
+    "alias": "presence",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Presence\\Providers\\PresenceServiceProvider"
+    ],
+    "files": []
+}
