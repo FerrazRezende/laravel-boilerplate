@@ -37,17 +37,17 @@ return [
     'stubs' => [
         'enabled' => false,
         'path' => base_path('vendor/nwidart/laravel-modules/src/Commands/stubs'),
+        // This app is Inertia-only, on one shared Vite entry (resources/js/app.js)
+        // that already globs Modules/*/resources/assets/js/Pages — a module never
+        // needs its own Blade views, vite.config.js, package.json, or app.js/scss.
+        // Those are the package's defaults for a Blade/Mix module; trimmed here so
+        // `module:make` stops generating dead files every single time, rather than
+        // relying on deleting them by hand after each new module (see MODULES.md).
         'files' => [
             'routes/web' => 'routes/web.php',
             'routes/api' => 'routes/api.php',
-            'views/index' => 'resources/views/index.blade.php',
-            'views/master' => 'resources/views/components/layouts/master.blade.php',
             'scaffold/config' => 'config/config.php',
             'composer' => 'composer.json',
-            'assets/js/app' => 'resources/assets/js/app.js',
-            'assets/sass/app' => 'resources/assets/sass/app.scss',
-            'vite' => 'vite.config.js',
-            'package' => 'package.json',
         ],
         'replacements' => [
             /**

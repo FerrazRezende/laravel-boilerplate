@@ -212,11 +212,14 @@ excluded from every locale on purpose; don't revive it as a real locale file.
 php artisan module:make <Name>
 ```
 
-The generator scaffolds Blade/Mix-oriented defaults (its own `vite.config.js`,
-`resources/assets/js/app.js`, `resources/views/index.blade.php`) that this
-Inertia app doesn't use — delete those, keep `app/`, `routes/`, `database/`,
-`config/`, `composer.json`, `module.json`. Mirror `FeatureFlags` as the
-reference layout for everything else. Vue pages go under
+`config/modules.php`'s `generator.stubs.files` is trimmed down so this no
+longer scaffolds Blade/Mix defaults (its own `vite.config.js`,
+`resources/assets/js/app.js`, `resources/views/index.blade.php`) — this app
+is Inertia-only on one shared Vite entry, so those were always dead weight,
+generated fresh and deleted by hand on every single module until that config
+was trimmed. Nothing to clean up now; you get `app/`, `routes/`, `database/`,
+`config/`, `composer.json`, `module.json` and nothing else. Mirror
+`FeatureFlags` as the reference layout for everything else. Vue pages go under
 `resources/assets/js/Pages/` — they're picked up automatically by the glob in
 `resources/js/app.js` (and `ssr.js`), no Vite config change needed. If your
 module needs global middleware (a new `feature:`-style route guard, for

@@ -229,31 +229,29 @@ no front, lembre que esse segundo merge existe e não é automático.
 php artisan module:make Invoices
 ```
 
-O gerador assume um módulo Blade/Mix por padrão (`vite.config.js`,
+Por padrão o gerador assume um módulo Blade/Mix (`vite.config.js`,
 `resources/assets/js/app.js`, `resources/views/index.blade.php`) — como este
-app é só Inertia, isso é descartado. Compare o scaffold cru com a versão
-adaptada:
+app é só Inertia, num Vite compartilhado, isso nunca serviria pra nada.
+`config/modules.php`'s `generator.stubs.files` já vem cortado pra não gerar
+mais nada disso, então o que sai do comando já é só o necessário:
 
 ```mermaid
 flowchart TD
-    ROOT["📁 Modules/Invoices/ (scaffold)"]
+    ROOT["📁 Modules/Invoices/ (module:make)"]
     ROOT --> APP["📁 app/"]
     ROOT --> DB["📁 database/"]
-    ROOT --> RES["📁 resources/"]
     ROOT --> ROUTES["📁 routes/
 web.php · api.php"]
-    ROOT --> VITE["✗ vite.config.js"]
-    ROOT --> PKG["✗ package.json"]
     ROOT --> META["composer.json · module.json"]
 
     APP --> CTRL["📁 Http/Controllers/
-InvoicesController.php"]
+InvoicesController.php ↻ renomear"]
     APP --> PROV["📁 Providers/"]
-
-    RES --> JS["✗ assets/js/app.js"]
-    RES --> SASS["✗ assets/sass/app.scss"]
-    RES --> VIEWS["✗ views/index.blade.php"]
 ```
+
+Só o controller placeholder (nome no plural, gerado pelo `module:make-controller`
+interno) costuma valer a pena renomear. Daí é só completar com o que a
+feature precisa:
 
 ```mermaid
 flowchart TD
@@ -285,7 +283,7 @@ InvoiceService.php"]
 Passos práticos:
 
 1. `php artisan module:make <Nome>`
-2. Apague o que é Blade/Mix (acima)
+2. Renomeie o controller placeholder se o nome gerado (plural) não servir
 3. Vue fica em `resources/assets/js/Pages/` — pego automaticamente pelo glob
    em `resources/js/app.js`, sem mexer no Vite
 4. Middleware global novo: a classe mora no módulo, mas o registro em
