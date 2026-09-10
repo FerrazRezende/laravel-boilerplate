@@ -1,4 +1,4 @@
-FROM php:8.4-fpm
+FROM php:8.5-fpm
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -20,7 +20,9 @@ RUN apt-get update && apt-get install -y \
     libcurl4-openssl-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Install PHP extensions
+# Install PHP extensions. OPcache is compiled into the php:8.5 image itself
+# (no more modules/opcache.so to build), so it's dropped from this list —
+# docker-php-ext-install now fails on it since there's nothing left to build.
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install \
     pdo \
@@ -32,7 +34,6 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     bcmath \
     gd \
     zip \
-    opcache \
     sockets
 
 # The php base image ships a channel.xml snapshot that goes stale, which
