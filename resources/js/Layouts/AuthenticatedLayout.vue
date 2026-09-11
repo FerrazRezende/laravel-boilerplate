@@ -12,6 +12,7 @@ import {
     Layers,
 } from 'lucide-vue-next';
 import ImpersonateBanner from '@modules/Permissions/resources/assets/js/components/ImpersonateBanner.vue';
+import ChatBubble from '@modules/Ai/resources/assets/js/components/ChatBubble.vue';
 import { useDarkMode } from '@/composables/useDarkMode';
 import { useLang, __ } from '@/composables/useLang';
 import { usePermissions } from '@/composables/usePermissions';
@@ -217,6 +218,8 @@ const initials = (name: string): string => {
         </aside>
 
         <!-- Main Content -->
+        <ChatBubble v-if="activeFeatures?.includes('ai')" />
+
         <main :class="['flex-1 transition-all duration-300 flex flex-col', collapsed ? 'ml-16' : 'ml-64']">
             <!-- Impersonate Banner -->
             <ImpersonateBanner

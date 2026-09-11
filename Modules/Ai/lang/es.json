@@ -1,0 +1,11 @@
+{
+    "Assistant": "Asistente",
+    "Close": "Cerrar",
+    "Type a message": "Escribe un mensaje",
+    "Ask anything about this application.": "Pregunta lo que quieras sobre esta aplicación.",
+    "Ask what is in the box, or how something here is wired up.": "Pregunta qué viene incluido, o cómo está montado algo de aquí.",
+    "Try it": "Pruébalo",
+    "Ask the assistant": "Pregunta al asistente",
+    "No AI provider key is configured. Add one to your .env to enable the assistant.": "No hay ninguna key de proveedor de IA configurada. Añade una a tu .env para habilitar el asistente.",
+    "The assistant did not reply. Check the provider key and the logs.": "El asistente no respondió. Revisa la key del proveedor y los logs."
+}

@@ -82,6 +82,9 @@ class HandleInertiaRequests extends Middleware
                 'user' => $user,
             ],
             'activeFeatures' => $activeFeatures,
+            // Visitor-facing, so it cannot come from activeFeatures: those are
+            // resolved per user and a guest has none. (Ai module)
+            'aiEnabled' => filled(config('ai.providers.'.config('ai.default').'.key')),
             'userPermissions' => $userPermissions,
             'userStatus' => $userStatus,
             'impersonating' => $impersonating,

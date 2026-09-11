@@ -228,8 +228,8 @@ decisions get made. Run `composer dump-autoload` after scaffolding (the
 merge-plugin picks up the new module's generated `composer.json`).
 
 **Optional modules.** Some modules ship here enabled but are stripped from a
-generated project unless the installer was asked for them (`Observability` is
-the first; `boilerplate new --obs` keeps it). They live in this repo so they are
+generated project unless the installer was asked for them (`Observability` and
+`Ai`; `boilerplate new --obs --ai` keeps both). They live in this repo so they are
 written, reviewed and tested like everything else rather than as templates
 inside the installer. Each one owns an `uninstall.php` beside its `module.json`
 that undoes its own wiring into shared files, run by

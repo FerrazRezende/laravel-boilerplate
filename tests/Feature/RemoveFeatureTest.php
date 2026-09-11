@@ -20,7 +20,7 @@ class RemoveFeatureTest extends TestCase
      * only the ones it asked for, so anything already gone is skipped rather
      * than failed — this guards what is present, not what once was.
      */
-    private const OPTIONAL = ['Observability'];
+    private const OPTIONAL = ['Ai', 'Observability'];
 
     /** @return array<int, string> */
     private function present(): array

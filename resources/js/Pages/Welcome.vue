@@ -4,6 +4,7 @@ import { ref } from 'vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useLang, __ } from '@/composables/useLang';
+import ChatPanel from '@modules/Ai/resources/assets/js/components/ChatPanel.vue';
 import { useDarkMode } from '@/composables/useDarkMode';
 import {
     Database,
@@ -209,6 +210,21 @@ const features = [
                                 <ArrowRight class="ml-2 h-4 w-4" />
                             </Button>
                         </Link>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Assistant -->
+            <section v-if="$page.props.aiEnabled" class="px-4 pb-4 sm:px-6">
+                <div class="mx-auto max-w-4xl">
+                    <p class="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">{{ __('Try it') }}</p>
+                    <h2 class="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">{{ __('Ask the assistant') }}</h2>
+
+                    <div class="mt-6">
+                        <ChatPanel
+                            :endpoint="route('ai.public-chat')"
+                            :empty-state="__('Ask what is in the box, or how something here is wired up.')"
+                        />
                     </div>
                 </div>
             </section>

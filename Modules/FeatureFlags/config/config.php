@@ -30,6 +30,11 @@ return [
     |
     */
     'definitions' => [
+        'ai' => [
+            'name' => 'AI assistant',
+            'description' => 'Chat backed by the Laravel AI SDK, on the landing page and in the app.',
+            'implemented_at' => '2026-09-11',
+        ],
         'observability' => [
             'name' => 'Observability',
             'description' => 'Live job progress and the /system/jobs screen.',

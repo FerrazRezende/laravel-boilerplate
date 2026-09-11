@@ -4,5 +4,6 @@
     "Presence": true,
     "FeatureFlags": true,
     "Permissions": true,
-    "Observability": true
+    "Observability": true,
+    "Ai": true
 }
