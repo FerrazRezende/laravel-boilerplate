@@ -6,11 +6,6 @@ export type StatusUpdateCallback = (event: UserStatusChangedEvent) => void;
 
 export type ConnectionState = 'connecting' | 'connected' | 'disconnected' | 'error';
 
-interface ChannelCallbacks {
-  onStatusUpdated?: StatusUpdateCallback;
-  onError?: (error: Error) => void;
-}
-
 /**
  * Echo Channels Composable
  *
@@ -97,77 +92,6 @@ export function useEchoChannels() {
   }
 
   /**
-   * Listen to private user channel for status updates
-   */
-  function listenToUserChannel(userId: string | number, callbacks: ChannelCallbacks): (() => void) | null {
-    const channelName = `private-users.${userId}`;
-
-    if (activeChannels.has(channelName)) {
-      return null;
-    }
-
-    try {
-      const echo = getEcho();
-      const channel = echo.private(channelName);
-
-      activeListeners.set(channelName, []);
-
-      if (callbacks.onStatusUpdated) {
-        channel.listen('.UserStatusChanged', callbacks.onStatusUpdated);
-        activeListeners.get(channelName)?.push('.UserStatusChanged');
-      }
-
-      activeChannels.set(channelName, channel);
-
-      return () => {
-        try {
-          echo.leave(channelName);
-          activeChannels.delete(channelName);
-          activeListeners.delete(channelName);
-        } catch (error) {
-          console.error('[useEchoChannels] Error unsubscribing:', error);
-        }
-      };
-    } catch (error) {
-      console.error('[useEchoChannels] Error subscribing to channel:', error);
-      return null;
-    }
-  }
-
-  /**
-   * Convenience method that wraps listenToUserChannel
-   */
-  function listenToStatusUpdates(userId: string | number, callback: StatusUpdateCallback): (() => void) | null {
-    return listenToUserChannel(userId, {
-      onStatusUpdated: callback,
-    });
-  }
-
-  /**
-   * Leave a specific channel
-   */
-  function leaveUserChannel(userId: string | number): void {
-    const channelName = `private-users.${userId}`;
-
-    if (activeChannels.has(channelName)) {
-      try {
-        getEcho().leave(channelName);
-        activeChannels.delete(channelName);
-        activeListeners.delete(channelName);
-      } catch (error) {
-        console.error('[useEchoChannels] Error leaving channel:', error);
-      }
-    }
-  }
-
-  /**
-   * Check if currently subscribed to a user's channel
-   */
-  function isSubscribedToUser(userId: string | number): boolean {
-    return activeChannels.has(`private-users.${userId}`);
-  }
-
-  /**
    * Get list of actively subscribed channel names
    */
   function getActiveChannels(): string[] {
@@ -186,7 +110,9 @@ export function useEchoChannels() {
    * Listen to the global presence channel for status updates from any user.
    */
   function listenToPresenceChannel(callback: StatusUpdateCallback): (() => void) | null {
-    const channelName = 'private-presence';
+    // Without the `private-` prefix: Echo adds it, and the server broadcasts on
+    // PrivateChannel('presence'), which is the same wire name.
+    const channelName = 'presence';
 
     if (activeChannels.has(channelName)) {
       return null;
@@ -228,11 +154,7 @@ export function useEchoChannels() {
     connect,
     disconnect,
     reconnect,
-    listenToUserChannel,
-    listenToStatusUpdates,
     listenToPresenceChannel,
-    leaveUserChannel,
-    isSubscribedToUser,
     getActiveChannels,
   };
 }

@@ -2,17 +2,14 @@
 
 use Illuminate\Support\Facades\Broadcast;
 
-Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
-    return (int) $user->id === (int) $id;
-});
-
-// User status channel for real-time presence
-Broadcast::channel('private-users.{id}', function ($user, $id) {
-    return (int) $user->id === (int) $id;
-});
-
-// Global presence channel for status updates - any authenticated user
-Broadcast::channel('private-presence', function ($user) {
+// Status updates broadcast here — any authenticated user may watch.
+//
+// Register the name WITHOUT the `private-` prefix. Laravel strips exactly one
+// `private-` from the incoming channel before matching these patterns, and
+// Echo's `private()` adds exactly one on the way out. Writing the prefix here
+// forces the client to pass it too, which then arrives doubled and matches
+// nothing: the subscription still authorizes, so it fails silently.
+Broadcast::channel('presence', function ($user) {
     return ['id' => $user->id, 'name' => $user->name];
 });
 
