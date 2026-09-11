@@ -35,8 +35,6 @@ const emit = defineEmits<{
 const getActivityIcon = (type: UserActivityType) => {
   const icons: Record<UserActivityType, typeof Eye> = {
     status_changed: ArrowRightLeft,
-    database_created: Database,
-    credential_created: KeyRound,
     page_view: Eye,
   };
   return icons[type] || FileText;
@@ -45,8 +43,6 @@ const getActivityIcon = (type: UserActivityType) => {
 const getActivityColor = (type: UserActivityType): string => {
   const colors: Record<UserActivityType, string> = {
     status_changed: 'text-blue-500 bg-blue-500 border-blue-500',
-    database_created: 'text-emerald-500 bg-emerald-500 border-emerald-500',
-    credential_created: 'text-violet-500 bg-violet-500 border-violet-500',
     page_view: 'text-slate-400 bg-slate-400 border-slate-400',
   };
   return colors[type] || 'text-slate-400 bg-slate-400 border-slate-400';
@@ -93,20 +89,12 @@ const formatRelativeTime = (dateString: string): string => {
 const getActivityLabel = (activity: UserActivity): string => {
   const labels: Record<UserActivityType, string> = {
     status_changed: __('user_activity.status_changed'),
-    database_created: __('user_activity.database_created'),
-    credential_created: __('Credential created'),
     page_view: __('user_activity.page_view'),
   };
 
   const baseLabel = labels[activity.activity_type] || activity.activity_type;
 
   if (activity.metadata) {
-    if (activity.activity_type === 'database_created' && activity.metadata.database_name) {
-      return `${baseLabel}: ${activity.metadata.database_name}`;
-    }
-    if (activity.activity_type === 'credential_created' && activity.metadata.credential_name) {
-      return `${baseLabel}: ${activity.metadata.credential_name}`;
-    }
     if (activity.activity_type === 'page_view' && activity.metadata.path) {
       return `${baseLabel} ${activity.metadata.path}`;
     }

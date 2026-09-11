@@ -74,11 +74,11 @@ const groupedPermissions = computed(() => {
 
 const getCategoryLabel = (category: string): string => {
     const labels: Record<string, string> = {
-        databases: 'Databases',
-        schemas: 'Schemas',
-        credentials: 'Credentials',
-        tables: 'Tables',
-        users: 'Users',
+        databases: __('Databases'),
+        schemas: __('Schemas'),
+        credentials: __('Credentials'),
+        tables: __('Tables'),
+        users: __('Users'),
     };
     return labels[category] || category.charAt(0).toUpperCase() + category.slice(1);
 };

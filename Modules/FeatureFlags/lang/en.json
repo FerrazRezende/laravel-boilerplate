@@ -34,5 +34,6 @@
     "This feature is not available for your account": "This feature is not available for your account",
     "Are you sure you want to deactivate this feature? All users will lose access.": "Are you sure you want to deactivate this feature? All users will lose access.",
     "Users will be selected deterministically based on ID.": "Users will be selected deterministically based on ID.",
-    "of": "of"
+    "of": "of",
+    "Removed user": "Removed user"
 }

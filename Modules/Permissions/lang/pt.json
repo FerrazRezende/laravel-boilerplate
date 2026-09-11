@@ -80,5 +80,7 @@
     "Cannot impersonate another admin user.": "Não é possível impersonar outro usuário administrador.",
     "Avatar": "Avatar",
     "Presence": "Presença",
-    "Activity Log": "Registro de atividade"
+    "Activity Log": "Registro de atividade",
+    "Schemas": "Schemas",
+    "Tables": "Tabelas"
 }

@@ -9,7 +9,6 @@
     "user_status.no_recent_activity": "No recent activity",
     "user_activity.status_changed": "Status changed",
     "user_activity.page_view": "Viewed",
-    "user_activity.database_created": "Created database",
     "Just now": "Just now",
     ":count minute ago | :count minutes ago": ":count minute ago | :count minutes ago",
     ":count hour ago | :count hours ago": ":count hour ago | :count hours ago",
@@ -17,11 +16,12 @@
     ":count week ago | :count weeks ago": ":count week ago | :count weeks ago",
     ":count month ago | :count months ago": ":count month ago | :count months ago",
     ":count year ago | :count years ago": ":count year ago | :count years ago",
-    "Credential created": "Credential created",
     "Status Changed": "Status Changed",
-    "Database Created": "Database Created",
     "Page View": "Page View",
     "Settings": "Settings",
     "Avatar of :name": "Avatar of :name",
-    "User avatar": "User avatar"
+    "User avatar": "User avatar",
+    "An error occurred": "An error occurred",
+    "Failed to fetch status": "Failed to fetch status",
+    "Failed to update status": "Failed to update status"
 }

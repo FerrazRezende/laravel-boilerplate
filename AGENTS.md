@@ -73,10 +73,18 @@ the controller sends, so the UI never disagrees with the Policy.
   Reach for `app()` only where injection is impossible, such as middleware.
 - **Ids are KSUIDs.** Models `use HasKsuid`; migrations declare `char(*, 27)`,
   never `id()` or `foreignId()`.
-- **All user-facing strings** go through `__()`. Keys are the English
-  sentence, living in the owning module's `lang/{en,pt,es}.json` — or root
-  `lang/{en,pt,es}.json` if 2+ modules share the literal string. See the
-  Modules section for how these get merged.
+- **All user-facing strings** go through `__()`, on both sides. In PHP that is
+  Laravel's global helper; in Vue it is a helper you must import
+  (`import { __ } from '@/composables/useLang'`), reading the `translations`
+  Inertia prop. It is also registered as a global template property, so
+  `{{ __('Save') }}` works without the import — but `<script setup>` needs it,
+  and that is where hardcoded strings hide: a label map or a toast message in
+  the script block is just as user-facing as the template.
+  Keys are the English sentence, living in the owning module's
+  `lang/{en,pt,es}.json` — or root `lang/{en,pt,es}.json` if 2+ modules share
+  the literal string. See the Modules section for how these get merged.
+  `TranslationCoverageTest` fails on a key with no entry, on a locale missing a
+  key its siblings have, and on user-facing text left unwrapped in a template.
 - **Auth is stock Breeze.** Do not add bespoke steps. Admin-created users are
   invited by email to set their own password; `MustVerifyEmail` is off on
   purpose, since arriving via an emailed link already proves the address.

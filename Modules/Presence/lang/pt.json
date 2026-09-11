@@ -9,7 +9,6 @@
     "user_status.no_recent_activity": "Sem atividade recente",
     "user_activity.status_changed": "Status alterado",
     "user_activity.page_view": "Visualizou",
-    "user_activity.database_created": "Criou database",
     "Just now": "Agora",
     ":count minute ago | :count minutes ago": ":count minuto atrás | :count minutos atrás",
     ":count hour ago | :count hours ago": ":count hora atrás | :count horas atrás",
@@ -17,11 +16,12 @@
     ":count week ago | :count weeks ago": ":count semana atrás | :count semanas atrás",
     ":count month ago | :count months ago": ":count mês atrás | :count meses atrás",
     ":count year ago | :count years ago": ":count ano atrás | :count anos atrás",
-    "Credential created": "Credencial criada",
     "Status Changed": "Status Alterado",
-    "Database Created": "Database Criado",
     "Page View": "Visualização de Página",
     "Settings": "Configurações",
     "Avatar of :name": "Avatar de :name",
-    "User avatar": "Avatar do usuário"
+    "User avatar": "Avatar do usuário",
+    "An error occurred": "Ocorreu um erro",
+    "Failed to fetch status": "Não foi possível obter o status",
+    "Failed to update status": "Não foi possível atualizar o status"
 }

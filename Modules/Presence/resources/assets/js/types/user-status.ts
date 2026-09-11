@@ -31,8 +31,6 @@ export interface UserStatusWithMeta {
  */
 export type UserActivityType =
   | 'status_changed'
-  | 'database_created'
-  | 'credential_created'
   | 'page_view';
 
 /**
@@ -62,12 +60,8 @@ export interface UserActivity {
  * Activity metadata based on activity_type
  */
 export interface UserActivityMetadata {
-  /** For 'database_created': database name and permission */
-  database_name?: string;
   permission?: string;
 
-  /** For 'credential_created': credential name and permission */
-  credential_name?: string;
 
   /** For 'page_view': the route path that was viewed */
   path?: string;

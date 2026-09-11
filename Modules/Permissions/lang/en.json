@@ -80,5 +80,7 @@
     "Cannot impersonate another admin user.": "Cannot impersonate another admin user.",
     "Avatar": "Avatar",
     "Presence": "Presence",
-    "Activity Log": "Activity Log"
+    "Activity Log": "Activity Log",
+    "Schemas": "Schemas",
+    "Tables": "Tables"
 }

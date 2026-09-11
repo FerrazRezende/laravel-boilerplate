@@ -86,7 +86,7 @@ const handleStatusChange = async (status: UserStatus) => {
       emit('error', error.value);
     }
   } catch (err) {
-    emit('error', err instanceof Error ? err.message : 'An error occurred');
+    emit('error', err instanceof Error ? err.message : __('An error occurred'));
   } finally {
     isSubmitting.value = false;
   }
