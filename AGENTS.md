@@ -242,6 +242,13 @@ in its own `lang/`, and it registers no global middleware. That is what keeps
 removal to a handful of needles — `Presence` is expensive to remove precisely
 because `Permissions` and `Profile` reach into it.
 
+**Docs that stay here.** `MODULES.md`, `AI.md` and `QUEUES.md` explain the
+boilerplate on its GitHub page and are stripped from generated projects by
+`scripts/strip-repo-docs.php`, which the installer runs every time. `AGENTS.md`
+and `README.md` ship. Add a doc of that kind and it goes in that script's list,
+along with whatever link the README carries to it — `StripRepoDocsTest` runs
+the real script and fails on a dead link.
+
 **This layout has a flat counterpart.** `scripts/to-mvc.php` converts the whole
 project into a stock `app/`-based Laravel app; it's what `boilerplate new
 --mvc` runs. The bulk of it is convention-driven, so a new module is picked up
