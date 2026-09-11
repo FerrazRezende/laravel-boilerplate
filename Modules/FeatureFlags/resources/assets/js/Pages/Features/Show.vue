@@ -316,7 +316,7 @@ const accessDisplay = computed(() => {
                                                 placeholder="50"
                                             />
                                             <p class="text-xs text-muted-foreground">
-                                                Users will be selected deterministically based on ID.
+                                                {{ __('Users will be selected deterministically based on ID.') }}
                                             </p>
                                         </div>
 
@@ -388,7 +388,7 @@ const accessDisplay = computed(() => {
                                     <DialogHeader>
                                         <DialogTitle>{{ __('Deactivate') }} {{ __('Feature') }}</DialogTitle>
                                         <DialogDescription>
-                                            Are you sure you want to deactivate this feature? All users will lose access.
+                                            {{ __('Are you sure you want to deactivate this feature? All users will lose access.') }}
                                         </DialogDescription>
                                     </DialogHeader>
                                     <DialogFooter>

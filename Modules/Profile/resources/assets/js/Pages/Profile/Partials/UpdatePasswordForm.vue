@@ -35,18 +35,17 @@ const updatePassword = () => {
     <section>
         <header>
             <h2 class="text-lg font-medium text-foreground">
-                Update Password
+                {{ __('Update Password') }}
             </h2>
 
             <p class="mt-1 text-sm text-muted-foreground">
-                Ensure your account is using a long, random password to stay
-                secure.
+                {{ __('Ensure your account is using a long, random password to stay secure.') }}
             </p>
         </header>
 
         <form @submit.prevent="updatePassword" class="mt-6 space-y-6">
             <div class="space-y-2">
-                <label for="current_password" class="text-sm font-medium">Current Password</label>
+                <label for="current_password" class="text-sm font-medium">{{ __('Current Password') }}</label>
 
                 <Input
                     id="current_password"
@@ -62,7 +61,7 @@ const updatePassword = () => {
             </div>
 
             <div class="space-y-2">
-                <label for="password" class="text-sm font-medium">New Password</label>
+                <label for="password" class="text-sm font-medium">{{ __('New Password') }}</label>
 
                 <Input
                     id="password"
@@ -78,7 +77,7 @@ const updatePassword = () => {
             </div>
 
             <div class="space-y-2">
-                <label for="password_confirmation" class="text-sm font-medium">Confirm Password</label>
+                <label for="password_confirmation" class="text-sm font-medium">{{ __('Confirm Password') }}</label>
 
                 <Input
                     id="password_confirmation"
@@ -93,7 +92,7 @@ const updatePassword = () => {
             </div>
 
             <div class="flex items-center gap-4">
-                <Button type="submit" :disabled="form.processing">Save</Button>
+                <Button type="submit" :disabled="form.processing">{{ __('Save') }}</Button>
 
                 <Transition
                     enter-active-class="transition ease-in-out"
@@ -105,7 +104,7 @@ const updatePassword = () => {
                         v-if="form.recentlySuccessful"
                         class="text-sm text-muted-foreground"
                     >
-                        Saved.
+                        {{ __('Saved.') }}
                     </p>
                 </Transition>
             </div>

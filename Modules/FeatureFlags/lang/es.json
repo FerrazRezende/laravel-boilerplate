@@ -31,5 +31,8 @@
     "Deactivated": "Desactivado",
     "No history available": "Sin historial disponible",
     "Specific Users": "Usuarios Específicos",
-    "This feature is not available for your account": "Esta característica no está disponible para tu cuenta"
+    "This feature is not available for your account": "Esta característica no está disponible para tu cuenta",
+    "Are you sure you want to deactivate this feature? All users will lose access.": "¿Seguro que quieres desactivar esta funcionalidad? Todos los usuarios perderán el acceso.",
+    "Users will be selected deterministically based on ID.": "Los usuarios se eligen de forma determinista por el ID.",
+    "of": "de"
 }

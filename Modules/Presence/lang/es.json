@@ -20,5 +20,8 @@
     "Credential created": "Credencial creada",
     "Status Changed": "Estado Cambiado",
     "Database Created": "Base de Datos Creada",
-    "Page View": "Vista de Página"
+    "Page View": "Vista de Página",
+    "Settings": "Configuración",
+    "Avatar of :name": "Avatar de :name",
+    "User avatar": "Avatar del usuario"
 }

@@ -20,5 +20,9 @@
     "The photo may not be greater than 2MB.": "La foto no puede ser mayor que 2MB.",
     "The photo must be between 100x100 and 2000x2000 pixels.": "La foto debe tener entre 100x100 y 2000x2000 píxeles.",
     "Change photo": "Cambiar foto",
-    "Click to upload or change your profile photo": "Haz clic para subir o cambiar tu foto de perfil"
+    "Click to upload or change your profile photo": "Haz clic para subir o cambiar tu foto de perfil",
+    "Delete Account": "Eliminar cuenta",
+    "Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.": "Una vez eliminada la cuenta, todos sus recursos y datos se borran permanentemente. Antes de eliminarla, descarga cualquier información que quieras conservar.",
+    "Are you sure you want to delete your account?": "¿Seguro que quieres eliminar tu cuenta?",
+    "Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.": "Una vez eliminada la cuenta, todos sus recursos y datos se borran permanentemente. Escribe tu contraseña para confirmar la eliminación definitiva."
 }

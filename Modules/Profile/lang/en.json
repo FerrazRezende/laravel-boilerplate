@@ -20,5 +20,9 @@
     "The photo may not be greater than 2MB.": "The photo may not be greater than 2MB.",
     "The photo must be between 100x100 and 2000x2000 pixels.": "The photo must be between 100x100 and 2000x2000 pixels.",
     "Change photo": "Change photo",
-    "Click to upload or change your profile photo": "Click to upload or change your profile photo"
+    "Click to upload or change your profile photo": "Click to upload or change your profile photo",
+    "Delete Account": "Delete Account",
+    "Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.": "Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.",
+    "Are you sure you want to delete your account?": "Are you sure you want to delete your account?",
+    "Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.": "Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account."
 }

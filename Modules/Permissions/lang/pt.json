@@ -77,5 +77,8 @@
     "You are now impersonating :name.": "Você está agora impersonando :name.",
     "You are no longer impersonating.": "Você não está mais impersonando.",
     "Only admins can impersonate users.": "Apenas administradores podem impersonar usuários.",
-    "Cannot impersonate another admin user.": "Não é possível impersonar outro usuário administrador."
+    "Cannot impersonate another admin user.": "Não é possível impersonar outro usuário administrador.",
+    "Avatar": "Avatar",
+    "Presence": "Presença",
+    "Activity Log": "Registro de atividade"
 }
