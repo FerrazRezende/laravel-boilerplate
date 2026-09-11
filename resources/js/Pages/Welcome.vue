@@ -44,7 +44,7 @@ const copyCommand = async () => {
 };
 
 const stack = [
-    { name: 'Laravel 12', role: __('Application framework (PHP 8.3+)') },
+    { name: 'Laravel 13', role: __('Application framework (PHP 8.5+)') },
     { name: 'Inertia.js + Vue 3', role: __('Front-end, no separate API') },
     { name: 'PostgreSQL', role: __('Primary datastore') },
     { name: 'Redis', role: __('Cache & session store') },
