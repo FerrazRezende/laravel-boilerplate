@@ -69,9 +69,10 @@ replaceOrFail('app/Http/Middleware/HandleInertiaRequests.php', <<<'PHP'
             'aiEnabled' => filled(config('ai.providers.'.config('ai.default').'.key')),
 PHP);
 
-step('tirando a config e as chaves de provider do .env');
+step('tirando a config, as chaves do .env e a documentação');
 
 rmrf('config/ai.php');
+rmrf('AI.md');
 
 foreach (['.env.example', '.env'] as $envFile) {
     if (! is_file($envFile)) {

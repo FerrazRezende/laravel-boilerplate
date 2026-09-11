@@ -472,14 +472,29 @@ $sources = filesIn(
     ['php', 'vue', 'js', 'ts'],
 );
 
-$rewritten = 0;
-foreach ($sources as $file) {
-    $original = file_get_contents($file);
-    $updated = preg_replace(array_keys($patterns), array_values($patterns), $original);
+// Docs name these paths too, and a flat project whose own documentation points
+// at Modules/ is worse than no documentation.
+$docs = array_values(array_filter(glob('*.md') ?: [], 'is_file'));
 
-    // Module Vue/TS imports resolved through the @modules Vite alias; now that
-    // everything shares one tree they are plain @/ imports.
-    $updated = preg_replace('#@modules/[A-Za-z0-9_]+/resources/assets/js/#', '@/', $updated);
+$docPaths = [
+    // Mirrors the move this script makes above; the generic rule below would
+    // otherwise leave it pointing at config/config.php.
+    '#Modules/FeatureFlags/config/config\.php#' => 'config/features.php',
+    '#(?<![A-Za-z0-9_])Modules/[A-Za-z0-9_]+/resources/assets/js/#' => 'resources/js/',
+    // `<Name>` included: docs write the path as a placeholder as often as not.
+    '#(?<![A-Za-z0-9_])Modules/(?:[A-Za-z0-9_]+|<Name>)/(app|config|database|lang|routes|tests)/#' => '$1/',
+];
+
+$rewritten = 0;
+foreach ([...$sources, ...$docs] as $file) {
+    $original = file_get_contents($file);
+
+    // Docs spell the paths out; code refers to them as namespaces and imports.
+    $updated = in_array($file, $docs, true)
+        ? preg_replace(array_keys($docPaths), array_values($docPaths), $original)
+        : preg_replace('#@modules/[A-Za-z0-9_]+/resources/assets/js/#', '@/', $original);
+
+    $updated = preg_replace(array_keys($patterns), array_values($patterns), $updated);
 
     // Catch up call sites with the provider renamed above.
     $updated = str_replace('FeatureFlagsServiceProvider', 'FeatureServiceProvider', $updated);
@@ -658,6 +673,38 @@ $docSwaps = [
     ['README.md', '## Arquitetura', 'readme-architecture.md'],
     ['AGENTS.md', '## Modules', 'agents-structure.md'],
 ];
+
+// Four sentences outside the swapped sections still describe the modular
+// layout. They are prose, not paths, so no rewrite rule reaches them.
+replaceOrFail(
+    'AGENTS.md',
+    'Domain code is
+organized into modules under `Modules/` (see "Modules" below) rather than a
+flat `app/`.',
+    'Domain code lives in a
+single `app/` (see "Structure" below).',
+);
+
+replaceOrFail(
+    'AGENTS.md',
+    '  after changing anything under `app/`, `Modules/`, `config/`, `routes/` or',
+    '  after changing anything under `app/`, `config/`, `routes/` or',
+);
+
+replaceOrFail(
+    'AGENTS.md',
+    '  Register it in `config/features.php` (merged under both
+  the `featureflags` and `features` config keys — see the Modules section),',
+    '  Register it in `config/features.php`,',
+);
+
+replaceOrFail(
+    'AGENTS.md',
+    "  sentence, living in the owning module's `lang/{en,pt,es}.json` — or root
+  `lang/{en,pt,es}.json` if 2+ modules share the literal string. See the
+  Modules section for how these get merged.",
+    '  sentence, living in `lang/{en,pt,es}.json`.',
+);
 
 foreach ($docSwaps as [$doc, $heading, $stub]) {
     $stubPath = __DIR__.'/mvc-docs/'.$stub;

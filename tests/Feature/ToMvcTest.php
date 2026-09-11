@@ -54,6 +54,20 @@ class ToMvcTest extends TestCase
     }
 
     #[Test]
+    public function the_documentation_stops_describing_modules(): void
+    {
+        // A flat project whose own docs point at Modules/ is worse than none,
+        // and AGENTS.md in particular is read by agents working on the code.
+        foreach (glob("{$this->workDir}/*.md") as $doc) {
+            $this->assertStringNotContainsString(
+                'Modules',
+                file_get_contents($doc),
+                basename($doc).' ainda descreve a estrutura modular',
+            );
+        }
+    }
+
+    #[Test]
     public function it_removes_its_own_tooling_from_the_generated_project(): void
     {
         $this->assertDirectoryDoesNotExist("{$this->workDir}/scripts");

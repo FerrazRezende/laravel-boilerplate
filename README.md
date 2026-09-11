@@ -25,6 +25,9 @@ domínio tem seus próprios controllers, models, rotas, migrations e traduções
 isolados dos demais. Para o mapa completo, os diagramas e como criar um
 módulo novo, veja [MODULES.md](MODULES.md).
 
+Duas partes têm documentação própria: [QUEUES.md](QUEUES.md) para filas,
+Horizon e progresso de jobs, e [AI.md](AI.md) para o assistente.
+
 ## Criando um novo projeto
 
 Instale o instalador uma vez por máquina:
