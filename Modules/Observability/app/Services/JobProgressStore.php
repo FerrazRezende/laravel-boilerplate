@@ -20,8 +20,13 @@ final class JobProgressStore
 
     private const INDEX = 'job-progress:running';
 
-    public function put(string $jobId, string $label, int $percentage, ?string $startedAt = null): void
-    {
+    public function put(
+        string $jobId,
+        string $label,
+        int $percentage,
+        ?string $startedAt = null,
+        ?string $queue = null,
+    ): void {
         $startedAt ??= now()->toIso8601String();
 
         Redis::setex($this->key($jobId), self::TTL, json_encode([
@@ -29,6 +34,7 @@ final class JobProgressStore
             'label' => $label,
             'percentage' => max(0, min(100, $percentage)),
             'started_at' => $startedAt,
+            'queue' => $queue,
             'updated_at' => now()->toIso8601String(),
         ]));
 
@@ -76,6 +82,26 @@ final class JobProgressStore
         }
 
         return $jobs;
+    }
+
+    /**
+     * How many tracked jobs are reporting on each queue, keyed by queue name.
+     *
+     * @return array<string, int>
+     */
+    public function countByQueue(): array
+    {
+        $counts = [];
+
+        foreach ($this->running() as $entry) {
+            $queue = $entry['queue'] ?? null;
+
+            if (is_string($queue) && $queue !== '') {
+                $counts[$queue] = ($counts[$queue] ?? 0) + 1;
+            }
+        }
+
+        return $counts;
     }
 
     private function key(string $jobId): string

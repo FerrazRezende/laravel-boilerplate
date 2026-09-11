@@ -87,11 +87,14 @@ trait TracksProgress
 
             $this->lastReportedPercentage = $percentage;
 
+            $queue = $this->progressQueue();
+
             app(JobProgressStore::class)->put(
                 $this->progressId,
                 $this->progressLabel(),
                 $percentage,
                 $this->progressStartedAt,
+                $queue,
             );
 
             broadcast(new JobProgressUpdated(
@@ -100,6 +103,7 @@ trait TracksProgress
                 $percentage,
                 $this->progressStartedAt,
                 $this->progressDispatcher,
+                $queue,
             ));
         } catch (\Throwable) {
             // Redis down, broadcaster unreachable: the job carries on.
@@ -118,6 +122,29 @@ trait TracksProgress
         } catch (\Throwable) {
             // Same reasoning as progress().
         }
+    }
+
+    /**
+     * Which queue this job is running on, so the screen can group by it.
+     *
+     * A job that never called onQueue() carries a null `queue`, and the queue
+     * it actually landed on is its connection's default — resolved here rather
+     * than reported as "none", which would be a lie the screen repeats.
+     */
+    private function progressQueue(): ?string
+    {
+        $queue = property_exists($this, 'queue') ? $this->queue : null;
+
+        if (is_string($queue) && $queue !== '') {
+            return $queue;
+        }
+
+        $connection = (property_exists($this, 'connection') ? $this->connection : null)
+            ?? config('queue.default');
+
+        $default = config("queue.connections.{$connection}.queue");
+
+        return is_string($default) ? $default : null;
     }
 
     /**

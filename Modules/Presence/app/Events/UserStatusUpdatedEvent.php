@@ -16,6 +16,13 @@ final class UserStatusUpdatedEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    /**
+     * A status change is a handful of fields going to people looking at the
+     * screen right now, so it rides the fast queue rather than waiting behind
+     * whatever bulk work happens to be on the default one.
+     */
+    public $broadcastQueue = 'high';
+
     public function __construct(
         public readonly User $user,
         public readonly UserStatusEnum $status,

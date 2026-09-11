@@ -7,5 +7,12 @@
     "Demo job": "Demo job",
     "Open Horizon": "Open Horizon",
     "Started": "Started",
-    "job_progress.waiting": "Waiting for the first report"
+    "job_progress.waiting": "Waiting for the first report",
+    "Queues": "Queues",
+    "Queue": "Queue",
+    "Workers": "Workers",
+    "Running": "Running",
+    "Waiting": "Waiting",
+    "Time to clear": "Time to clear",
+    "Workers shows what Horizon has running against what the queue is allowed. Zero workers with items waiting means Horizon is down.": "Workers shows what Horizon has running against what the queue is allowed. Zero workers with items waiting means Horizon is down."
 }

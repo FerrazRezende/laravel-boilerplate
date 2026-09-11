@@ -6,6 +6,7 @@ export interface JobProgress {
   label: string;
   percentage: number;
   started_at: string;
+  queue: string | null;
 }
 
 /**

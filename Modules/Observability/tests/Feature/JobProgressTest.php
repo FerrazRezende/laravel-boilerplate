@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Modules\Observability\Tests\Feature;
 
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Redis;
 use Modules\Observability\Events\JobProgressUpdated;
@@ -68,6 +69,75 @@ class JobProgressTest extends TestCase
         );
 
         $job->clearProgress();
+    }
+
+    /**
+     * The one that matters for the screen feeling live. A plain ShouldBroadcast
+     * queues the update behind the job that is reporting it, so the bar only
+     * catches up once the worker is free — which is when nobody needs it.
+     */
+    public function test_progress_is_broadcast_immediately_rather_than_queued_behind_the_job(): void
+    {
+        $this->assertInstanceOf(
+            ShouldBroadcastNow::class,
+            new JobProgressUpdated('abc', 'Stand-in', 50, now()->toIso8601String()),
+        );
+    }
+
+    public function test_it_records_the_queue_the_job_is_running_on(): void
+    {
+        $job = new class
+        {
+            use TracksProgress;
+
+            public $queue = 'low';
+        };
+
+        $job->progress(1, 4);
+
+        $this->assertSame('low', app(JobProgressStore::class)->find($job->progressId)['queue']);
+
+        $event = new JobProgressUpdated('abc', 'Stand-in', 25, now()->toIso8601String(), null, 'low');
+        $this->assertSame('low', $event->broadcastWith()['queue']);
+
+        $job->clearProgress();
+    }
+
+    public function test_a_job_that_chose_no_queue_reports_its_connection_default(): void
+    {
+        config(['queue.default' => 'redis', 'queue.connections.redis.queue' => 'medium']);
+
+        $job = $this->job();
+        $job->progress(1, 4);
+
+        $this->assertSame('medium', app(JobProgressStore::class)->find($job->progressId)['queue']);
+
+        $job->clearProgress();
+    }
+
+    public function test_it_counts_tracked_jobs_by_queue(): void
+    {
+        $first = new class
+        {
+            use TracksProgress;
+
+            public $queue = 'high';
+        };
+
+        $second = new class
+        {
+            use TracksProgress;
+
+            public $queue = 'high';
+        };
+
+        $first->progress(10);
+        $second->progress(20);
+
+        $this->assertGreaterThanOrEqual(2, app(JobProgressStore::class)->countByQueue()['high'] ?? 0);
+
+        $first->clearProgress();
+        $second->clearProgress();
     }
 
     public function test_a_job_with_no_dispatcher_broadcasts_only_to_operators(): void

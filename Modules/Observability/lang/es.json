@@ -7,5 +7,12 @@
     "Demo job": "Job de demostración",
     "Open Horizon": "Abrir Horizon",
     "Started": "Inicio",
-    "job_progress.waiting": "Esperando el primer reporte"
+    "job_progress.waiting": "Esperando el primer reporte",
+    "Queues": "Colas",
+    "Queue": "Cola",
+    "Workers": "Workers",
+    "Running": "En ejecución",
+    "Waiting": "En cola",
+    "Time to clear": "Tiempo para vaciar",
+    "Workers shows what Horizon has running against what the queue is allowed. Zero workers with items waiting means Horizon is down.": "Workers muestra cuántos tiene Horizon en pie frente al techo de la cola. Cero workers con elementos en cola significa que Horizon está caído."
 }

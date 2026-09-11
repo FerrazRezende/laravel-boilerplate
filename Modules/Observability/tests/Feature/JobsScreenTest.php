@@ -45,6 +45,24 @@ class JobsScreenTest extends TestCase
             ->assertInertia(fn ($page) => $page->component('Jobs/Index', false)->has('jobs'));
     }
 
+    public function test_the_screen_lists_every_configured_queue(): void
+    {
+        $this->actingAs(User::factory()->create(['is_admin' => true]))
+            ->get('/system/jobs')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Jobs/Index', false)
+                ->has('queues', 3)
+                ->where('queues.0.name', 'high')
+                ->where('queues.1.name', 'medium')
+                ->where('queues.2.name', 'low')
+                // Capacity is what the queue is allowed, not what is up right
+                // now: a screen that read it off a stopped Horizon would show
+                // every queue as having no room.
+                ->where('queues.0.capacity', config('horizon.defaults.supervisor-high.maxProcesses'))
+                ->etc());
+    }
+
     public function test_the_page_the_controller_renders_exists(): void
     {
         $this->assertFileExists($this->frontendFile(
@@ -67,6 +85,28 @@ class JobsScreenTest extends TestCase
             ->assertRedirect();
 
         Queue::assertPushed(DemoProgressJob::class);
+    }
+
+    public function test_the_demo_job_goes_to_the_queue_that_was_asked_for(): void
+    {
+        Queue::fake();
+
+        $this->actingAs(User::factory()->create(['is_admin' => true]))
+            ->post('/system/jobs/demo', ['queue' => 'low'])
+            ->assertRedirect();
+
+        Queue::assertPushed(DemoProgressJob::class, fn (DemoProgressJob $job) => $job->queue === 'low');
+    }
+
+    public function test_a_queue_nobody_configured_is_refused(): void
+    {
+        Queue::fake();
+
+        $this->actingAs(User::factory()->create(['is_admin' => true]))
+            ->post('/system/jobs/demo', ['queue' => 'urgent'])
+            ->assertSessionHasErrors('queue');
+
+        Queue::assertNothingPushed();
     }
 
     public function test_non_admins_cannot(): void

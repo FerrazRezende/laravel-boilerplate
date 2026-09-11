@@ -10,6 +10,9 @@ use Modules\Presence\Services\UserStatusService;
 
 final class CacheUserStatusListener implements ShouldQueue
 {
+    /** One cache write, and the UI is waiting on it. Same reasoning as the event. */
+    public string $queue = 'high';
+
     public function __construct(
         private readonly UserStatusService $statusService,
     ) {}

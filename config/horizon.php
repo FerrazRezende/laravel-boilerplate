@@ -190,18 +190,28 @@ return [
     | Queue Worker Configuration
     |--------------------------------------------------------------------------
     |
-    | Here you may define the queue worker settings used by your application
-    | in all environments. These supervisors and settings handle all your
-    | queued jobs and will be provisioned by Horizon during deployment.
+    | Three queues, one supervisor each: `high` for work a user is waiting on,
+    | `medium` for everything unremarkable (it is the default, so a job that
+    | says nothing lands here), and `low` for bulk work nobody is watching.
+    |
+    | One supervisor per queue rather than one supervisor over all three: a
+    | shared supervisor moves its processes around by workload, so a pile of
+    | `low` work can take every worker on the box. Pinned pools mean each queue
+    | owns its capacity — that is also what makes a capacity column on the jobs
+    | screen mean something, since the ceiling is a number, not a negotiation.
+    |
+    | Within a pool, `auto` scales between minProcesses and maxProcesses by how
+    | long the queue takes to clear.
     |
     */
 
     'defaults' => [
-        'supervisor-1' => [
+        'supervisor-high' => [
             'connection' => 'redis',
-            'queue' => ['default'],
+            'queue' => ['high'],
             'balance' => 'auto',
             'autoScalingStrategy' => 'time',
+            'minProcesses' => 1,
             'maxProcesses' => 1,
             'maxTime' => 0,
             'maxJobs' => 0,
@@ -210,20 +220,78 @@ return [
             'timeout' => 60,
             'nice' => 0,
         ],
+
+        'supervisor-medium' => [
+            'connection' => 'redis',
+            'queue' => ['medium'],
+            'balance' => 'auto',
+            'autoScalingStrategy' => 'time',
+            'minProcesses' => 1,
+            'maxProcesses' => 1,
+            'maxTime' => 0,
+            'maxJobs' => 0,
+            'memory' => 128,
+            'tries' => 1,
+            'timeout' => 120,
+            'nice' => 0,
+        ],
+
+        // Longer timeout because the work here is bulky by definition, and a
+        // positive `nice` so an import never competes with the web process.
+        'supervisor-low' => [
+            'connection' => 'redis',
+            'queue' => ['low'],
+            'balance' => 'auto',
+            'autoScalingStrategy' => 'time',
+            'minProcesses' => 1,
+            'maxProcesses' => 1,
+            'maxTime' => 0,
+            'maxJobs' => 0,
+            'memory' => 128,
+            'tries' => 1,
+            'timeout' => 600,
+            'nice' => 5,
+        ],
     ],
 
     'environments' => [
         'production' => [
-            'supervisor-1' => [
+            'supervisor-high' => [
+                'minProcesses' => 2,
                 'maxProcesses' => 10,
                 'balanceMaxShift' => 1,
                 'balanceCooldown' => 3,
             ],
+
+            'supervisor-medium' => [
+                'minProcesses' => 1,
+                'maxProcesses' => 6,
+                'balanceMaxShift' => 1,
+                'balanceCooldown' => 3,
+            ],
+
+            'supervisor-low' => [
+                'minProcesses' => 1,
+                'maxProcesses' => 3,
+                'balanceMaxShift' => 1,
+                'balanceCooldown' => 10,
+            ],
         ],
 
+        // Small on purpose: a laptop that runs Postgres, Redis, Reverb and Vite
+        // does not have three idle cores to give the queue. It is also enough
+        // to watch a queue fill up on /system/jobs, which is the point.
         'local' => [
-            'supervisor-1' => [
+            'supervisor-high' => [
                 'maxProcesses' => 3,
+            ],
+
+            'supervisor-medium' => [
+                'maxProcesses' => 2,
+            ],
+
+            'supervisor-low' => [
+                'maxProcesses' => 1,
             ],
         ],
     ],

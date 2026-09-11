@@ -7,15 +7,39 @@ Horizon não responde: *quanto falta para este job terminar?*
 O módulo só existe no projeto se ele foi criado com `boilerplate new --obs`.
 O resto desta página — filas, Horizon, como despachar um job — vale sempre.
 
-## A fila
+## As filas
 
-Uma fila só, `default`, na conexão `redis`, com um supervisor. É o suficiente
-para a maioria dos projetos, e dividir em várias filas é uma decisão que vale
-tomar quando existir um motivo concreto (um tipo de job lento afogando os
-rápidos, por exemplo), não antes.
+Três filas na conexão `redis`, cada uma com seu próprio supervisor no
+`config/horizon.php`:
+
+| Fila     | Para que serve                                   | Workers (local) | Workers (produção) | Timeout |
+|----------|--------------------------------------------------|-----------------|--------------------|---------|
+| `high`   | Trabalho que alguém está esperando na tela        | 1–3             | 2–10               | 60s     |
+| `medium` | O resto. É a fila padrão de quem não escolhe uma  | 1–2             | 1–6                | 120s    |
+| `low`    | Trabalho em lote que ninguém está olhando         | 1               | 1–3                | 600s    |
+
+Um supervisor por fila, e não um supervisor cobrindo as três: um supervisor
+compartilhado move os processos dele conforme a carga, então uma pilha de job
+`low` consegue tomar todos os workers da máquina. Pool fixo significa que cada
+fila tem capacidade própria — e é isso que faz a coluna de capacidade na tela
+querer dizer alguma coisa, já que o teto é um número e não uma negociação.
+
+Dentro do pool, o `auto` escala entre `minProcesses` e `maxProcesses` pelo tempo
+que a fila leva para esvaziar.
+
+```php
+ImportaPlanilha::dispatch($arquivo)->onQueue('low');
+```
+
+Quem não chama `onQueue()` cai em `medium` (`REDIS_QUEUE` no `.env`). Vale
+escolher `high` quando tem gente parada esperando o resultado, e `low` quando o
+job é longo e ninguém sente se ele demorar mais dez minutos. No boilerplate, o
+único trabalho na `high` é a atualização de status do Presence — meia dúzia de
+campos indo para quem está com a tela aberta.
 
 ```
 QUEUE_CONNECTION=redis     # .env
+REDIS_QUEUE=medium
 ```
 
 ```bash
@@ -25,6 +49,10 @@ make horizon-status
 
 O painel fica em `/horizon`, restrito a `is_admin` pelo gate `viewHorizon`
 definido em `app/Providers/HorizonServiceProvider.php`.
+
+Acrescentar uma quarta fila é acrescentar um supervisor: a tela `/system/jobs`
+lê o plano de provisionamento do próprio Horizon, então ela aparece lá sozinha,
+sem nenhuma lista de filas para manter em dia.
 
 ## Por que o progresso não vive dentro do Horizon
 
@@ -106,10 +134,19 @@ no `failed()`, senão a barra fica congelada em 60% até o TTL expirar.
 job chama progress()
    ├─ grava em job-progress:{ksuid} no Redis (TTL renovado a cada escrita)
    ├─ entra num sorted set por horário de início
-   └─ emite JobProgressUpdated
+   └─ emite JobProgressUpdated (ShouldBroadcastNow, do próprio worker)
          ├─ canal jobs-admin        → sempre
          └─ canal jobs.{userId}     → só se havia usuário no dispatch
 ```
+
+**O evento é `ShouldBroadcastNow`, não `ShouldBroadcast`.** Um `ShouldBroadcast`
+comum empilha um `BroadcastEvent` na fila — a mesma fila que o job que está
+reportando está ocupando. Cada atualização entra atrás do trabalho que ela
+descreve, e a barra só anda quando o worker libera, que é exatamente quando ela
+deixa de ter utilidade. Com um pool pequeno o efeito é uma tela que fica parada
+o job inteiro e pisca no fim. Mandar inline custa ao worker uma chamada HTTP
+para o Reverb, limitada a uma por segundo pelo throttle e dentro do mesmo
+`try/catch` — broadcaster fora do ar continua não derrubando job nenhum.
 
 O id é um **KSUID gerado no construtor** e serializado junto com o job. Isso é
 o que faz um retry continuar na mesma barra em vez de abrir uma segunda — o id
@@ -126,11 +163,49 @@ autenticação.
 
 ## A tela
 
-`/system/jobs`, restrita a admin, atrás da flag `observability`. Mostra label,
-percentual e horário de início de cada job em execução, atualizando ao vivo
-pelo websocket. Traz também um botão que dispara um job de demonstração — num
-projeto recém-criado não há fila nenhuma rodando, e uma tela vazia não
-demonstra nada.
+`/system/jobs`, restrita a admin, atrás da flag `observability`. Duas partes:
+
+**As filas.** Uma linha por fila, com quantos workers o Horizon tem de pé contra
+o teto configurado (`3/3`), quantos jobs estão reservados por um worker agora,
+quantos esperam e a estimativa de tempo para esvaziar. Os números de fila vêm do
+Redis direto e os de worker vêm do Horizon: com o Horizon parado a tela mostra
+`0` workers e a fila crescendo, que é justamente o que se quer ver nessa hora —
+não uma tela vazia. A lista de filas sai do plano de provisionamento do Horizon,
+então ela nunca discorda do `config/horizon.php`.
+
+Esses números não têm evento por trás, então essa é a única parte da tela que
+faz polling: um reload parcial de cinco em cinco segundos, só da prop `queues`,
+preservando o estado para não derrubar a assinatura do websocket junto.
+
+**Os jobs.** Label, fila, percentual e horário de início de cada job em execução,
+ao vivo pelo websocket. Traz também um botão que dispara um job de demonstração
+na fila escolhida — num projeto recém-criado não há fila nenhuma rodando, e uma
+tela vazia não demonstra nada. Disparar três demos na `low`, que tem um worker
+só, é o jeito mais rápido de ver uma fila passar da capacidade dela.
+
+## Os dois endereços do Reverb
+
+O navegador e o PHP não chegam no Reverb pelo mesmo endereço quando o stack é
+Docker. O navegador fala com a porta publicada no host (`localhost:8080`); o
+PHP fala com o serviço na rede do Compose (`reverb:8080`). Publicar em
+`localhost` de dentro do container `app` ou `horizon` bate no próprio container,
+onde não tem ninguém ouvindo.
+
+Por isso o projeto tem um `config/broadcasting.php` próprio, cuja única razão de
+existir é esta linha:
+
+```php
+'host' => env('REVERB_BACKEND_HOST') ?: env('REVERB_HOST'),
+```
+
+O default do framework usa `REVERB_HOST` dos dois lados, e a falha resultante é
+silenciosa da pior forma: o websocket do navegador conecta, o canal autoriza, o
+job roda até o fim — e nenhum evento sai, porque o `progress()` engole o erro de
+broadcast de propósito. Fora do Docker, onde os dois endereços são o mesmo,
+basta `REVERB_HOST` e o fallback cuida do resto.
+
+`BroadcastAddressTest` fixa essa separação, porque um `php artisan config:publish
+broadcasting` restaura o default do framework e derruba tudo de novo sem avisar.
 
 ## Ao criar um canal novo
 
@@ -158,6 +233,7 @@ nomes como texto, fixando cada nome do cliente ao evento que o alimenta.
 
 ## O que ficou de fora
 
-Pulse, Prometheus/Grafana, métricas de CPU/RAM e painel de capacidade de fila.
-Profundidade de fila e tempo até esvaziar já existem no Horizon (`api/workload`)
-e não vale reimplementar sem um motivo.
+Pulse, Prometheus/Grafana, métricas de CPU/RAM, histórico e gráfico de
+throughput. Profundidade de fila e tempo até esvaziar continuam sendo do
+Horizon — a tela lê o `WorkloadRepository` dele em vez de recalcular, e o que
+ela acrescenta é o recorte por capacidade ao lado do progresso dos jobs.

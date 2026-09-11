@@ -6,11 +6,22 @@ namespace Modules\Observability\Events;
 
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-final class JobProgressUpdated implements ShouldBroadcast
+/**
+ * Broadcast now, not queued.
+ *
+ * A plain ShouldBroadcast pushes a BroadcastEvent job onto the same queue the
+ * reporting job is occupying, so every progress update lines up *behind* the
+ * work it describes: the bar only moves once the job releases its worker, which
+ * is exactly when the bar stops being useful. Sending it inline costs the
+ * worker one HTTP call to Reverb, throttled to one per second by TracksProgress
+ * and wrapped in its try/catch, so an unreachable broadcaster still cannot take
+ * the job down.
+ */
+final class JobProgressUpdated implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -20,6 +31,7 @@ final class JobProgressUpdated implements ShouldBroadcast
         public readonly int $percentage,
         public readonly string $startedAt,
         public readonly ?string $dispatchedBy = null,
+        public readonly ?string $queue = null,
     ) {}
 
     /**
@@ -53,6 +65,7 @@ final class JobProgressUpdated implements ShouldBroadcast
             'label' => $this->label,
             'percentage' => $this->percentage,
             'started_at' => $this->startedAt,
+            'queue' => $this->queue,
         ];
     }
 }
