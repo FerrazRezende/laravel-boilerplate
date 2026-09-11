@@ -227,6 +227,18 @@ example), the **class** lives in your module but its **registration** in
 decisions get made. Run `composer dump-autoload` after scaffolding (the
 merge-plugin picks up the new module's generated `composer.json`).
 
+**This layout has a flat counterpart.** `scripts/to-mvc.php` converts the whole
+project into a stock `app/`-based Laravel app; it's what `boilerplate new
+--mvc` runs. The bulk of it is convention-driven, so a new module is picked up
+without touching the script — but the few edits that can't be derived (the
+Pennant wiring in `FeatureFlagsServiceProvider`, the Presence event binding,
+`ShareTranslationsMiddleware`, the Vite resolver in `app.js`/`ssr.js`) assert
+their target text before rewriting it, and abort if it moved. `ToMvcTest`
+runs the real script against a copy of the tree on every `php artisan test`,
+so if your change breaks the flat flavour you'll see it here, not in someone's
+generated project. `make mvc-verify` runs the heavier pass: flatten, drop
+nwidart, then run the flattened project's own suite and Pint.
+
 ## Gotchas
 
 - npm must run as the host user; running it as root leaves `node_modules`
