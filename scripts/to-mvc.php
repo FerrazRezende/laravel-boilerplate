@@ -700,10 +700,10 @@ replaceOrFail(
 
 replaceOrFail(
     'AGENTS.md',
-    "  sentence, living in the owning module's `lang/{en,pt,es}.json` — or root
-  `lang/{en,pt,es}.json` if 2+ modules share the literal string. See the
-  Modules section for how these get merged.",
-    '  sentence, living in `lang/{en,pt,es}.json`.',
+    "  Keys are the English sentence, living in the owning module's
+  `lang/{en,pt,es}.json` — or root `lang/{en,pt,es}.json` if 2+ modules share
+  the literal string. See the Modules section for how these get merged.",
+    '  Keys are the English sentence, living in `lang/{en,pt,es}.json`.',
 );
 
 foreach ($docSwaps as [$doc, $heading, $stub]) {
