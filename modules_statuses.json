@@ -3,5 +3,6 @@
     "Profile": true,
     "Presence": true,
     "FeatureFlags": true,
-    "Permissions": true
+    "Permissions": true,
+    "Observability": true
 }

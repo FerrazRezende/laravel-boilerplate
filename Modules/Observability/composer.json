@@ -1,0 +1,30 @@
+{
+    "name": "nwidart/observability",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Observability\\": "app/",
+            "Modules\\Observability\\Database\\Factories\\": "database/factories/",
+            "Modules\\Observability\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Observability\\Tests\\": "tests/"
+        }
+    }
+}

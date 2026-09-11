@@ -1,5 +1,5 @@
 import { reactive } from 'vue';
-import { getEcho } from './echo';
+import { getEcho } from '@/composables/echo';
 
 /**
  * Live roster of connected users, fed by the 'online-users' presence channel.

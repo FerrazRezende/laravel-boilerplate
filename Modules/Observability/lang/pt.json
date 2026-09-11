@@ -1,0 +1,11 @@
+{
+    "Jobs": "Jobs",
+    "Running jobs": "Jobs em execução",
+    "Live progress for jobs that report it. Horizon stays the place to triage failures.": "Progresso ao vivo dos jobs que reportam. O Horizon continua sendo o lugar de investigar falhas.",
+    "No jobs running right now.": "Nenhum job em execução agora.",
+    "Run a demo job": "Rodar um job de demonstração",
+    "Demo job": "Job de demonstração",
+    "Open Horizon": "Abrir o Horizon",
+    "Started": "Início",
+    "job_progress.waiting": "Aguardando o primeiro reporte"
+}

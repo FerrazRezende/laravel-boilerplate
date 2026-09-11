@@ -227,6 +227,21 @@ example), the **class** lives in your module but its **registration** in
 decisions get made. Run `composer dump-autoload` after scaffolding (the
 merge-plugin picks up the new module's generated `composer.json`).
 
+**Optional modules.** Some modules ship here enabled but are stripped from a
+generated project unless the installer was asked for them (`Observability` is
+the first; `boilerplate new --obs` keeps it). They live in this repo so they are
+written, reviewed and tested like everything else rather than as templates
+inside the installer. Each one owns an `uninstall.php` beside its `module.json`
+that undoes its own wiring into shared files, run by
+`scripts/remove-feature.php`; `RemoveFeatureTest` performs the real removal
+against a copy of the tree on every `php artisan test`, so wiring a module into
+a new shared file without updating its `uninstall.php` fails here.
+
+Keep an optional module a **leaf**: nothing else may import it, its strings live
+in its own `lang/`, and it registers no global middleware. That is what keeps
+removal to a handful of needles — `Presence` is expensive to remove precisely
+because `Permissions` and `Profile` reach into it.
+
 **This layout has a flat counterpart.** `scripts/to-mvc.php` converts the whole
 project into a stock `app/`-based Laravel app; it's what `boilerplate new
 --mvc` runs. The bulk of it is convention-driven, so a new module is picked up
@@ -241,6 +256,17 @@ nwidart, then run the flattened project's own suite and Pint.
 
 ## Gotchas
 
+- **Never write `private-` into a broadcast channel name.** `PrivateChannel`
+  adds it on the server, Echo's `private()` adds it on the client, and Laravel
+  strips exactly one before matching `routes/channels.php`. Put it in yourself
+  and it arrives doubled: the subscription still authorizes, and not one event
+  is ever delivered. Register `Broadcast::channel('jobs-admin')`, broadcast on
+  `new PrivateChannel('jobs-admin')`, subscribe with `echo.private('jobs-admin')`.
+  The status channel shipped broken this way for a while — `PresenceChannelTest`
+  and `JobsScreenTest` now pin each client name to the event that feeds it.
+  Note that a test cannot catch this over HTTP: `phpunit.xml` sets
+  `BROADCAST_CONNECTION=null`, and the null broadcaster authorizes everything
+  without reading `routes/channels.php`.
 - npm must run as the host user; running it as root leaves `node_modules`
   owned by root and the `vite` container then cannot write its cache, which
   surfaces as bogus MIME/CORS errors in the browser. `make` handles this.

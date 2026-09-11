@@ -1,0 +1,11 @@
+{
+    "Jobs": "Jobs",
+    "Running jobs": "Running jobs",
+    "Live progress for jobs that report it. Horizon stays the place to triage failures.": "Live progress for jobs that report it. Horizon stays the place to triage failures.",
+    "No jobs running right now.": "No jobs running right now.",
+    "Run a demo job": "Run a demo job",
+    "Demo job": "Demo job",
+    "Open Horizon": "Open Horizon",
+    "Started": "Started",
+    "job_progress.waiting": "Waiting for the first report"
+}

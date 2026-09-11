@@ -25,14 +25,28 @@ class PresenceChannelTest extends TestCase
 {
     use RefreshDatabase;
 
-    private const COMPOSABLE = __DIR__.'/../../resources/assets/js/composables/useEchoChannels.ts';
+    /**
+     * Resolved rather than hardcoded because the --mvc flavour moves this file
+     * to resources/js/composables/, and this test ships in both layouts.
+     */
+    private function composable(): string
+    {
+        foreach ([
+            'Modules/Presence/resources/assets/js/composables/useEchoChannels.ts',
+            'resources/js/composables/useEchoChannels.ts',
+        ] as $candidate) {
+            if (is_file(base_path($candidate))) {
+                return base_path($candidate);
+            }
+        }
 
-    private const CHANNELS = __DIR__.'/../../../../routes/channels.php';
+        $this->fail('não achei useEchoChannels.ts');
+    }
 
     public function test_the_client_subscribes_to_the_channel_the_event_publishes_to(): void
     {
         // Echo prepends `private-` to whatever name the composable passes.
-        preg_match("/const channelName = '([^']+)'/", file_get_contents(self::COMPOSABLE), $matches);
+        preg_match("/const channelName = '([^']+)'/", file_get_contents($this->composable()), $matches);
 
         $this->assertSame($this->publishedChannel(), 'private-'.($matches[1] ?? ''));
     }
@@ -44,7 +58,7 @@ class PresenceChannelTest extends TestCase
 
         $this->assertMatchesRegularExpression(
             "/Broadcast::channel\('".preg_quote($authorized, '/')."'/",
-            file_get_contents(self::CHANNELS),
+            file_get_contents(base_path('routes/channels.php')),
         );
     }
 

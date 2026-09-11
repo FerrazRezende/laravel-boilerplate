@@ -1,5 +1,5 @@
 import { ref } from 'vue';
-import { getEcho, destroyEcho } from './echo';
+import { getEcho, destroyEcho } from '@/composables/echo';
 import type { UserStatusChangedEvent } from '../types/user-status';
 
 export type StatusUpdateCallback = (event: UserStatusChangedEvent) => void;

@@ -1,4 +1,4 @@
-import { Flag, Home, Shield, Users, type LucideIcon } from 'lucide-vue-next';
+import { Activity, Flag, Home, Shield, Users, type LucideIcon } from 'lucide-vue-next';
 
 /**
  * The sidebar is rendered from this list, so a link cannot reach the screen
@@ -48,6 +48,14 @@ export const navigation: NavItem[] = [
         active: 'system.users.*',
         label: 'Users',
         icon: Users,
+        adminOnly: true,
+    },
+    {
+        route: 'system.jobs.index',
+        active: 'system.jobs.*',
+        label: 'Jobs',
+        icon: Activity,
+        feature: 'observability',
         adminOnly: true,
     },
 ];

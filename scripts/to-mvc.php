@@ -689,6 +689,9 @@ if (is_file('vendor/bin/pint')) {
 // mid-run is safe.
 step('removendo o próprio ferramental do projeto gerado');
 rmrf('tests/Feature/ToMvcTest.php');
+// Removing an optional module is meaningless once there are no modules — and
+// the installer does it before flattening anyway.
+rmrf('tests/Feature/RemoveFeatureTest.php');
 rmrf(__DIR__);
 
 echo "\nPronto. Agora rode:\n";

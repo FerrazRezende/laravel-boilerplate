@@ -1,0 +1,11 @@
+{
+    "name": "Observability",
+    "alias": "observability",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Observability\\Providers\\ObservabilityServiceProvider"
+    ],
+    "files": []
+}

@@ -29,5 +29,11 @@ return [
     |   ],
     |
     */
-    'definitions' => [],
+    'definitions' => [
+        'observability' => [
+            'name' => 'Observability',
+            'description' => 'Live job progress and the /system/jobs screen.',
+            'implemented_at' => '2026-09-11',
+        ],
+    ],
 ];
