@@ -4,7 +4,7 @@ Boilerplate para novos projetos Laravel com feature flags, RBAC, Redis, Horizon 
 
 ## Stack
 
-- **Laravel 12** (PHP 8.3+) servido por **Octane/Swoole**
+- **Laravel 13** (PHP 8.5+) servido por **Octane/Swoole**
 - **Inertia.js** para o front-end (sem API separada)
 - **PostgreSQL** como banco principal
 - **Redis** para cache e sessão

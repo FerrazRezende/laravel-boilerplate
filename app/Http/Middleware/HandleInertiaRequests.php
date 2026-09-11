@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
 use Inertia\Middleware;
 use Modules\FeatureFlags\Services\FeatureFlagService;
@@ -28,22 +27,6 @@ class HandleInertiaRequests extends Middleware
     public function version(Request $request): ?string
     {
         return parent::version($request);
-    }
-
-    /**
-     * Get translations for the current locale.
-     */
-    protected function getTranslations(): array
-    {
-        $langFile = lang_path(App::currentLocale().'.json');
-
-        if (! file_exists($langFile)) {
-            return [];
-        }
-
-        $translations = json_decode(file_get_contents($langFile), true);
-
-        return $translations ?? [];
     }
 
     /**
@@ -102,8 +85,9 @@ class HandleInertiaRequests extends Middleware
             'userPermissions' => $userPermissions,
             'userStatus' => $userStatus,
             'impersonating' => $impersonating,
-            'locale' => App::currentLocale(),
-            'translations' => $this->getTranslations(),
+            // `locale` and `translations` are shared by ShareTranslationsMiddleware,
+            // which runs after SetLocaleMiddleware. Sharing them here too would
+            // read the locale before it is set, and be overwritten anyway.
             'ziggy' => fn () => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),

@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Laravel 12 + Inertia/Vue 3 boilerplate. Postgres, Redis (cache, session, queue),
+Laravel 13 + Inertia/Vue 3 boilerplate. Postgres, Redis (cache, session, queue),
 Horizon, Reverb, RustFS, Pennant feature flags, Spatie RBAC. Domain code is
 organized into modules under `Modules/` (see "Modules" below) rather than a
 flat `app/`. Everything runs in Docker Compose; nothing is installed on the
