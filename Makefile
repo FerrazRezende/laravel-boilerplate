@@ -71,6 +71,21 @@ test: ## Run PHPUnit tests
 pint: ## Run Laravel Pint code style fixer
 	docker compose exec app ./vendor/bin/pint
 
+mvc-verify: ## Flatten a throwaway copy (--mvc flavour) and run its full suite
+	@rm -rf /tmp/mvc-verify
+	@mkdir -p /tmp/mvc-verify
+	@rsync -a --exclude node_modules --exclude .git --exclude public/build \
+		--exclude bootstrap/ssr --exclude bootstrap/cache ./ /tmp/mvc-verify/
+	@docker run --rm -v /tmp/mvc-verify:/var/www/html -w /var/www/html \
+		$$(docker compose config --images app | head -1) php scripts/to-mvc.php
+	@docker run --rm -v /tmp/mvc-verify:/var/www/html -w /var/www/html \
+		$$(docker compose config --images app | head -1) composer remove nwidart/laravel-modules --no-interaction
+	@docker run --rm --network $$(docker compose ps --format '{{.Networks}}' app | head -1) \
+		-v /tmp/mvc-verify:/var/www/html -w /var/www/html \
+		$$(docker compose config --images app | head -1) php artisan test
+	@docker run --rm -v /tmp/mvc-verify:/var/www/html -w /var/www/html \
+		$$(docker compose config --images app | head -1) vendor/bin/pint --test
+
 dev: ## Start dev environment and run dev script
 	docker compose up -d
 	docker compose exec app bash -c "composer run-script dev"
