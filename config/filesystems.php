@@ -67,7 +67,9 @@ return [
             'region' => env('RUSTFS_REGION', 'us-east-1'),
             'bucket' => env('RUSTFS_BUCKET', 'boilerplate'),
             'endpoint' => env('RUSTFS_ENDPOINT'),
-            'use_path_style_endpoint' => true,
+            // Path style because the dev endpoint is a bare host with no
+            // wildcard DNS: `rustfs:9000/bucket`, never `bucket.rustfs:9000`.
+            'use_path_style_endpoint' => env('RUSTFS_USE_PATH_STYLE_ENDPOINT', true),
             'url' => env('RUSTFS_PUBLIC_URL'),
             'public_url' => env('RUSTFS_PUBLIC_URL'),
             'throw' => false,

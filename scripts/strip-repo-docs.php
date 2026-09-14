@@ -50,8 +50,9 @@ if (! str_contains($contents, $linkBlock)) {
 
 $contents = str_replace($linkBlock, '', $contents);
 
-$modulesLink = 'Para o mapa completo, os diagramas e como criar um
-módulo novo, veja [MODULES.md](MODULES.md).';
+$modulesLink = 'Para o mapa
+completo, os diagramas e como criar um módulo novo, veja
+[MODULES.md](MODULES.md).';
 
 if (! str_contains($contents, $modulesLink)) {
     fail('a seção Arquitetura mudou no README.md — atualize este script');
