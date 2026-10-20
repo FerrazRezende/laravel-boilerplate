@@ -78,6 +78,21 @@ Como o app roda em Octane, alterações em PHP só valem depois de recarregar os
 make octane-reload
 ```
 
+## Imagem de produção
+
+O `docker compose` usa o estágio `dev` do `Dockerfile`, com Composer e Node
+dentro e o projeto montado por cima. Para deploy, o estágio final é outro:
+
+```bash
+docker build -t meu-app .   # estágio production
+```
+
+Ele leva só o código, o `vendor` sem pacotes de dev e os assets já
+compilados, e roda como `www-data`. O `.env` fica de fora pelo
+`.dockerignore` — a configuração entra por variáveis de ambiente do
+orquestrador. Depois de subir, rode `php artisan migrate --force` e, para
+criar o primeiro admin, use o tinker: o `UserSeeder` não roda em produção.
+
 ## Testes
 
 ```bash

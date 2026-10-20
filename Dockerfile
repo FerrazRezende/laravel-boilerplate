@@ -1,4 +1,16 @@
-FROM php:8.5-fpm
+# Stages:
+#   base       PHP 8.5 with every extension the app needs. Nothing else.
+#   dev        what docker-compose.yml runs: Composer and Node on board, and
+#              www-data aligned with the host user for the bind mount.
+#   vendor     production Composer install (no dev packages).
+#   assets     production Vite build.
+#   production the deployable image: code, vendor and built assets only — no
+#              Composer, no Node, no .env (see .dockerignore).
+#
+# `docker compose` builds `dev` (every service sets target: dev). A plain
+# `docker build .` builds the last stage, which is `production`.
+
+FROM php:8.5-fpm AS base
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -50,8 +62,16 @@ RUN pecl install redis && docker-php-ext-enable redis
 RUN pecl install -D 'enable-openssl="yes" enable-swoole-curl="yes" enable-sockets="yes"' swoole \
     && docker-php-ext-enable swoole
 
+WORKDIR /var/www/html
+
+EXPOSE 8000
+
+# ---------------------------------------------------------------------------
+
+FROM base AS dev
+
 # Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 # Install Node.js & NPM
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
@@ -67,14 +87,57 @@ ARG WWW_GID=1000
 RUN groupmod -o -g ${WWW_GID} www-data \
     && usermod -o -u ${WWW_UID} -g ${WWW_GID} www-data
 
-WORKDIR /var/www/html
-
 COPY . /var/www/html
 
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/storage \
     && chmod -R 775 /var/www/html/bootstrap/cache
 
-EXPOSE 8000
+CMD ["php", "artisan", "octane:start", "--server=swoole", "--host=0.0.0.0", "--port=8000"]
+
+# ---------------------------------------------------------------------------
+
+FROM base AS vendor
+
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+COPY . /var/www/html
+
+# --no-scripts: package discovery needs the app booted, which happens at
+# runtime instead (Laravel rebuilds bootstrap/cache/packages.php on first boot).
+RUN composer install \
+    --no-dev \
+    --no-interaction \
+    --no-progress \
+    --no-scripts \
+    --prefer-dist \
+    --optimize-autoloader
+
+# ---------------------------------------------------------------------------
+
+# resources/js imports Ziggy straight out of vendor/, so the build needs the
+# Composer stage's tree, not just the JavaScript sources.
+FROM node:20-bookworm-slim AS assets
+
+WORKDIR /var/www/html
+
+COPY --from=vendor /var/www/html /var/www/html
+
+RUN npm ci --no-audit --no-fund && npm run build
+
+# ---------------------------------------------------------------------------
+
+FROM base AS production
+
+COPY docker/php/php.ini /usr/local/etc/php/conf.d/custom.ini
+
+COPY --from=vendor --chown=www-data:www-data /var/www/html /var/www/html
+COPY --from=assets --chown=www-data:www-data /var/www/html/public/build /var/www/html/public/build
+COPY --from=assets --chown=www-data:www-data /var/www/html/bootstrap/ssr /var/www/html/bootstrap/ssr
+
+RUN mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
+    && chown -R www-data:www-data storage bootstrap/cache
+
+USER www-data
 
 CMD ["php", "artisan", "octane:start", "--server=swoole", "--host=0.0.0.0", "--port=8000"]
