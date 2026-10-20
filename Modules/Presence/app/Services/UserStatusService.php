@@ -75,61 +75,6 @@ final readonly class UserStatusService
     }
 
     /**
-     * Get all user IDs with a specific chosen status.
-     *
-     * @param  string  $status  The status value (online, away, busy, offline)
-     * @return array<string> Array of user IDs (strings for KSUID)
-     */
-    public function getUserIdsWithStatus(string $status): array
-    {
-        $userIds = [];
-        $prefix = config('database.redis.options.prefix', '');
-        $keys = Redis::connection()->keys('user:*:status');
-
-        foreach ($keys as $key) {
-            $cleanKey = $prefix ? str_replace($prefix, '', $key) : $key;
-            $userId = explode(':', $cleanKey)[1];
-
-            $data = Redis::get($cleanKey);
-            if ($data === false || $data === null) {
-                continue;
-            }
-
-            if (json_decode($data, true)['status'] === $status) {
-                $userIds[] = $userId;
-            }
-        }
-
-        return $userIds;
-    }
-
-    /**
-     * Get all chosen statuses, indexed by user ID.
-     *
-     * @return array<string, string>
-     */
-    public function getAllStatuses(): array
-    {
-        $statuses = [];
-        $prefix = config('database.redis.options.prefix', '');
-        $keys = Redis::connection()->keys('user:*:status');
-
-        foreach ($keys as $key) {
-            $cleanKey = $prefix ? str_replace($prefix, '', $key) : $key;
-            $userId = explode(':', $cleanKey)[1];
-
-            $data = Redis::get($cleanKey);
-            if ($data === false || $data === null) {
-                continue;
-            }
-
-            $statuses[$userId] = json_decode($data, true)['status'];
-        }
-
-        return $statuses;
-    }
-
-    /**
      * @return ?array{status: string, updated_at: string}
      */
     public function getStatusWithMetadata(string $userId): ?array

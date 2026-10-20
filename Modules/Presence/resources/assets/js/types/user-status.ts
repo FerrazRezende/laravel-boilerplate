@@ -95,8 +95,6 @@ export interface UserStatusChangedEvent {
   user_id: string;
   /** User display name */
   name: string;
-  /** User email */
-  email: string;
   /** New status */
   status: UserStatus;
   /** Status display label */

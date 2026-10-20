@@ -41,12 +41,15 @@ final class UserStatusUpdatedEvent implements ShouldBroadcast
         return 'status.updated';
     }
 
+    /**
+     * Every signed-in user can listen on this channel, so nothing goes in the
+     * payload that a colleague's screen has no need for — the email included.
+     */
     public function broadcastWith(): array
     {
         return [
             'user_id' => $this->user->id,
             'name' => $this->user->name,
-            'email' => $this->user->email,
             'status' => $this->status->value,
             'status_label' => $this->status->label(),
             'status_color' => $this->status->color(),
