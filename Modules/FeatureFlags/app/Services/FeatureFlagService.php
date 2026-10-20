@@ -214,48 +214,78 @@ class FeatureFlagService
     }
 
     /**
-     * Check if a feature is active for a specific user.
+     * Whether a feature is on for a user, as the `feature:` middleware sees it.
+     * Goes through Pennant so the answer — and its cache — is the same one
+     * every other caller gets.
      */
     public function isActiveForUser(string $featureName, User $user): bool
     {
-        // God Admin always sees all features
-        if ($user->is_admin === true) {
+        return Feature::for($user)->active($featureName);
+    }
+
+    /**
+     * Names of the features active for a user, in one Pennant lookup.
+     *
+     * @return list<string>
+     */
+    public function getActiveFeaturesForUser(User $user): array
+    {
+        $names = array_keys(config('features.definitions', []));
+
+        if ($names === []) {
+            return [];
+        }
+
+        return array_keys(array_filter(Feature::for($user)->values($names)));
+    }
+
+    /**
+     * The single place a flag's value is decided. Pennant calls this to fill
+     * its cache; nothing else should re-derive the rules.
+     */
+    public function resolve(string $featureName, User $user): bool
+    {
+        return $this->decide($featureName, FeatureSetting::where('feature_name', $featureName)->first(), $user);
+    }
+
+    /**
+     * The users the rollout itself reaches, reading the setting once. Admins
+     * are counted only when the rollout reaches them: the admin exemption
+     * would otherwise inflate "N users selected" on the admin screen.
+     *
+     * @param  Collection<int, User>  $users
+     * @return Collection<int, User>
+     */
+    public function usersWithAccess(string $featureName, Collection $users): Collection
+    {
+        $setting = FeatureSetting::where('feature_name', $featureName)->first();
+
+        return $users
+            ->filter(fn (User $user) => $this->decide($featureName, $setting, $user, exemptAdmins: false))
+            ->values();
+    }
+
+    private function decide(string $featureName, ?FeatureSetting $setting, User $user, bool $exemptAdmins = true): bool
+    {
+        // God Admin always has access to all features
+        if ($exemptAdmins && $user->is_admin === true) {
             return true;
         }
 
-        $setting = FeatureSetting::where('feature_name', $featureName)->first();
-
-        // No setting in the database: fall back to the environment default
         if (! $setting) {
             return $this->isFeatureActiveByDefault($featureName);
         }
 
-        // Setting exists but is inactive: feature is off
         if (! $setting->is_active) {
             return false;
         }
 
-        // Setting is active: follow its rollout strategy
         return match ($setting->strategy) {
             RolloutStrategyEnum::ALL => true,
             RolloutStrategyEnum::PERCENTAGE => $this->checkPercentage($user->id, $setting->percentage),
-            RolloutStrategyEnum::USERS => in_array((string) $user->id, $setting->user_ids ?? []),
+            RolloutStrategyEnum::USERS => in_array((string) $user->id, $setting->user_ids ?? [], true),
             RolloutStrategyEnum::INACTIVE => false,
         };
-    }
-
-    /**
-     * Get features active for a specific user.
-     */
-    public function getActiveFeaturesForUser(User $user): array
-    {
-        $allFeatures = $this->getAllFeatures();
-
-        return $allFeatures
-            ->filter(fn (array $feature) => $this->isActiveForUser($feature['name'], $user))
-            ->map(fn (array $feature) => $feature['name'])
-            ->values()
-            ->toArray();
     }
 
     /**
