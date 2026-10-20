@@ -82,4 +82,29 @@ class ChatTest extends TestCase
 
         $this->post('/ai/public-chat', ['message' => 'hello'])->assertStatus(429);
     }
+
+    public function test_the_public_chat_has_a_site_wide_daily_budget(): void
+    {
+        config()->set('ai.assistant.public_daily_limit', 2);
+
+        // Different addresses, so the per-IP throttle never comes into it.
+        foreach (['203.0.113.1', '203.0.113.2'] as $ip) {
+            $this->withServerVariables(['REMOTE_ADDR' => $ip])
+                ->post('/ai/public-chat', ['message' => 'hello'])
+                ->assertOk();
+        }
+
+        $this->withServerVariables(['REMOTE_ADDR' => '203.0.113.3'])
+            ->post('/ai/public-chat', ['message' => 'hello'])
+            ->assertStatus(429)
+            ->assertJsonStructure(['message']);
+    }
+
+    public function test_answers_have_a_token_ceiling(): void
+    {
+        config()->set('ai.assistant.max_tokens', 300);
+
+        $this->assertSame(300, (new Assistant)->maxTokens());
+        $this->assertSame(128, (new Assistant([], 128))->maxTokens());
+    }
 }

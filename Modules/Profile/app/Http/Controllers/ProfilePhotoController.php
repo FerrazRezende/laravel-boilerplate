@@ -23,17 +23,18 @@ class ProfilePhotoController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
-        // Delete old photo if exists (use raw attribute, not accessor which returns signed URL)
-        $oldAvatarPath = $user->getAttributes()['avatar'] ?? null;
+        // Raw attribute: the accessor returns the proxy URL, not the path.
+        $oldAvatarPath = $user->getRawOriginal('avatar');
+
+        // Upload and point the user at the new file before removing the old
+        // one, so a failed upload leaves the current avatar intact.
+        $photoPath = $this->profilePictureService->upload($user, $request->file('photo'));
+
+        $user->update(['avatar' => $photoPath]);
+
         if ($oldAvatarPath) {
             $this->profilePictureService->delete($oldAvatarPath);
         }
-
-        // Upload new photo
-        $photoPath = $this->profilePictureService->upload($user, $request->file('photo'));
-
-        // Update user's avatar
-        $user->update(['avatar' => $photoPath]);
 
         return redirect()
             ->back()

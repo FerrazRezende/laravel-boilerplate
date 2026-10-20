@@ -368,5 +368,6 @@
     "Sign in to the app this boilerplate ships with, or spin up a fresh one from the CLI.": "Entre na aplicação que já vem com este boilerplate, ou suba uma nova a partir da CLI.",
     "Go to dashboard": "Ir para o painel",
     "internal Laravel starter kit": "kit inicial interno em Laravel",
-    "Sign out": "Sair"
+    "Sign out": "Sair",
+    "The last active admin cannot be deactivated or deleted.": "O último administrador ativo não pode ser desativado nem excluído."
 }

@@ -29,7 +29,9 @@ Depois de mexer no `.env`: `make octane-reload`.
 | Quem alcança | Usuário autenticado | Qualquer visitante |
 | Gate | `auth` + flag `ai` | Presença da key |
 | Throttle | 30/min | **5/min por IP** |
-| Histórico enviado | Completo (até 20 turnos) | Últimos 6 turnos |
+| Histórico enviado | Completo (até 20 turnos) | Últimos 6 turnos, até 6.000 caracteres |
+| Tamanho da resposta | 1.024 tokens | 512 tokens |
+| Teto diário | — | **500 respostas por dia, somando todos os visitantes** |
 
 ### Por que o chat público não usa a flag `ai`
 
@@ -88,13 +90,20 @@ Um agente exposto a visitante é uma forma de alguém gastar a sua conta de API,
 e a doc do SDK diz explicitamente que ele não traz proteção nenhuma para esse
 caso. O que existe aqui:
 
-- **Throttle de 5 requests por minuto por IP** na rota.
+- **Throttle de 5 requests por minuto por IP** na rota. Só funciona porque
+  `bootstrap/app.php` confia nos proxies da rede privada; sem isso, o IP de
+  todo visitante seria o do nginx e o limite viraria um só para o site inteiro.
+- **Teto diário global** (`ai.assistant.public_daily_limit`, padrão 500).
+  Throttle por IP não segura quem usa muitos endereços; este segura. Passando
+  dele, a rota responde 429 até a janela de 24 h virar.
+- **Teto de tokens por resposta** (`ai.assistant.max_tokens` e
+  `public_max_tokens`), lido pelo SDK via `Assistant::maxTokens()`.
 - **Histórico validado e limitado** — no máximo 20 mensagens, papel restrito a
   `user`/`assistant` e tamanho máximo por mensagem. O histórico vem do
   navegador, então não é confiável: sem o limite de papel, dava para injetar
   uma mensagem `system` e reescrever as instruções do agente.
-- **Só os últimos 6 turnos** vão para o provider no caminho público, o que
-  limita o tamanho de cada chamada.
+- **Só os últimos 6 turnos, até 6.000 caracteres no total**, vão para o
+  provider no caminho público, o que limita o tamanho de cada chamada.
 - **Instruções escopadas ao produto**, com ordem explícita de recusar o que
   não tem a ver com a aplicação.
 

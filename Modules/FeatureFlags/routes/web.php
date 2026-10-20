@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\Route;
 use Modules\FeatureFlags\Http\Controllers\FeatureFlagController;
 
-Route::middleware(['web', 'auth'])
+Route::middleware(['web', 'auth', 'admin'])
     ->prefix('system')
     ->name('system.')
     ->group(function (): void {

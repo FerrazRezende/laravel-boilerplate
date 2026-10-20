@@ -77,8 +77,8 @@ FeatureHistory"]
     subgraph MOD_PM["Modules/Permissions"]
         PM1["Role/Permission/User(admin)
 /Impersonate Controllers"]
-        PM2["CheckDeniedPermissions
-HandleImpersonation"]
+        PM2["ImpersonateController
+denied_permissions (User)"]
     end
 
     MW --> MOD_ID

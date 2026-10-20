@@ -1,0 +1,39 @@
+# Everything here stays out of `COPY . ...` in the Dockerfile. Development
+# bind-mounts the project over the image anyway, so this only shapes what a
+# built image carries — and a built image must never carry secrets.
+.env
+.env.*
+!.env.example
+auth.json
+
+.git
+.github
+.idea
+.vscode
+.fleet
+.zed
+.claude
+
+node_modules
+vendor
+public/build
+public/hot
+public/storage
+bootstrap/ssr
+bootstrap/cache/*.php
+
+storage/logs/*
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/framework/testing/*
+storage/app/private/*
+storage/app/public/*
+storage/pail
+storage/*.key
+# Keep the placeholders so every storage directory still exists in the image.
+!storage/**/.gitignore
+
+.phpunit.cache
+.phpunit.result.cache
+*.log

@@ -13,13 +13,13 @@ class NotificationController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $notifications = Notification::where('user_id', $request->user()->id)
-            ->orderBy('created_at', 'desc')
+        $notifications = Notification::forUser($request->user())
+            ->latest()
             ->limit(20)
             ->get();
 
         return response()->json([
-            'data' => $notifications->map(fn ($n) => [
+            'data' => $notifications->map(fn (Notification $n) => [
                 'id' => $n->id,
                 'title' => $n->title,
                 'message' => $n->message,
@@ -32,31 +32,26 @@ class NotificationController extends Controller
 
     public function unreadCount(Request $request): JsonResponse
     {
-        $count = Notification::where('user_id', $request->user()->id)
-            ->where('read', false)
-            ->count();
-
-        return response()->json(['count' => $count]);
+        return response()->json([
+            'count' => Notification::forUser($request->user())->unread()->count(),
+        ]);
     }
 
-    public function markAsRead(Request $request, int $id): JsonResponse
+    public function markAsRead(Request $request, string $id): JsonResponse
     {
-        $notification = Notification::where('user_id', $request->user()->id)
-            ->where('id', $id)
-            ->first();
-
-        if ($notification) {
-            $notification->update(['read' => true]);
-        }
+        Notification::forUser($request->user())
+            ->whereKey($id)
+            ->unread()
+            ->update(['read' => true, 'read_at' => now()]);
 
         return response()->json(['success' => true]);
     }
 
     public function markAllAsRead(Request $request): JsonResponse
     {
-        Notification::where('user_id', $request->user()->id)
-            ->where('read', false)
-            ->update(['read' => true]);
+        Notification::forUser($request->user())
+            ->unread()
+            ->update(['read' => true, 'read_at' => now()]);
 
         return response()->json(['success' => true]);
     }

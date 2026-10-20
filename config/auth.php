@@ -22,6 +22,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Public Registration
+    |--------------------------------------------------------------------------
+    |
+    | Whether anyone may create an account at /register. Turn it off for an
+    | invite-only app: admins still create users from /system/users, and each
+    | one gets an email to set their own password.
+    |
+    */
+
+    'registration' => (bool) env('AUTH_REGISTRATION', true),
+
+    /*
+    |--------------------------------------------------------------------------
     | Authentication Guards
     |--------------------------------------------------------------------------
     |

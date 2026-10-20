@@ -18,8 +18,6 @@ class PermissionController extends Controller
      */
     public function index(Request $request)
     {
-        abort_unless($request->user()->is_admin, 403);
-
         $permissions = Permission::orderBy('name')->paginate(50);
         $roles = Role::with('permissions')
             ->withCount('users')

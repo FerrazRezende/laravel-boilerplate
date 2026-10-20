@@ -58,7 +58,7 @@ const fetchUnreadCount = async () => {
     }
 };
 
-const markAsRead = async (notificationId: number) => {
+const markAsRead = async (notificationId: string) => {
     try {
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 

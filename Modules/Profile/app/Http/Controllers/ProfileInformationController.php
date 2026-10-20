@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
 use Modules\Profile\Http\Requests\ProfileUpdateRequest;
+use Modules\Profile\Services\ProfilePictureService;
 
 class ProfileInformationController extends Controller
 {
@@ -46,7 +47,7 @@ class ProfileInformationController extends Controller
     /**
      * Delete the user's account.
      */
-    public function destroy(Request $request): RedirectResponse
+    public function destroy(Request $request, ProfilePictureService $pictures): RedirectResponse
     {
         $request->validate([
             'password' => ['required', 'current_password'],
@@ -54,9 +55,21 @@ class ProfileInformationController extends Controller
 
         $user = $request->user();
 
+        if ($user->isLastActiveAdmin()) {
+            return back()->withErrors([
+                'password' => __('The last active admin cannot be deactivated or deleted.'),
+            ]);
+        }
+
+        $avatarPath = $user->getRawOriginal('avatar');
+
         Auth::logout();
 
         $user->delete();
+
+        if ($avatarPath) {
+            $pictures->delete($avatarPath);
+        }
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();

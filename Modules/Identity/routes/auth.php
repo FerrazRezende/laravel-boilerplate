@@ -12,10 +12,14 @@ use Modules\Identity\Http\Controllers\RegisteredUserController;
 use Modules\Identity\Http\Controllers\VerifyEmailController;
 
 Route::middleware('guest')->group(function () {
-    Route::get('register', [RegisteredUserController::class, 'create'])
-        ->name('register');
+    // Off in config/auth.php means the routes do not exist at all, so
+    // Route::has('register') hides the link on the landing and login pages.
+    if (config('auth.registration')) {
+        Route::get('register', [RegisteredUserController::class, 'create'])
+            ->name('register');
 
-    Route::post('register', [RegisteredUserController::class, 'store']);
+        Route::post('register', [RegisteredUserController::class, 'store']);
+    }
 
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');

@@ -42,7 +42,11 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        // A deactivated account fails exactly like a wrong password, so the
+        // form never confirms that the address belongs to someone.
+        $active = fn ($user) => $user->isActive();
+
+        if (! Auth::attemptWhen($this->only('email', 'password'), $active, $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([

@@ -65,7 +65,7 @@ class FeatureFlagTest extends TestCase
         $admin = User::factory()->create(['is_admin' => true]);
         $this->service()->deactivate(self::FEATURE, $admin);
 
-        // Deliberate: FeatureServiceProvider::resolveFeature exempts admins from
+        // Deliberate: FeatureFlagService::resolve exempts admins from
         // flags entirely. Asserted so the exemption cannot be dropped silently.
         $this->actingAs($admin)->get('/__feature-probe')->assertOk();
     }

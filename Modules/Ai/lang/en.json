@@ -7,5 +7,6 @@
     "Try it": "Try it",
     "Ask the assistant": "Ask the assistant",
     "No AI provider key is configured. Add one to your .env to enable the assistant.": "No AI provider key is configured. Add one to your .env to enable the assistant.",
-    "The assistant did not reply. Check the provider key and the logs.": "The assistant did not reply. Check the provider key and the logs."
+    "The assistant did not reply. Check the provider key and the logs.": "The assistant did not reply. Check the provider key and the logs.",
+    "The assistant has answered all it can for today. Please try again tomorrow.": "The assistant has answered all it can for today. Please try again tomorrow."
 }

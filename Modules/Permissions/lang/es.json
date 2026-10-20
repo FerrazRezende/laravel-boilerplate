@@ -18,7 +18,6 @@
     "Select :category permissions": "Seleccione los permisos de :category",
     "Unmark all": "Desmarcar",
     "Permissions synced successfully": "Permisos sincronizados con éxito",
-    "Cannot delete the last admin user": "No se puede eliminar el último usuario administrador",
     "User deactivated successfully": "Usuario desactivado con éxito",
     "Required": "El campo :attribute es obligatorio.",
     "Manage system users": "Gestionar los usuarios del sistema",
@@ -76,11 +75,11 @@
     "Error loading activities": "Error al cargar actividades",
     "You are now impersonating :name.": "Estás ahora impersonando a :name.",
     "You are no longer impersonating.": "Ya no estás impersonando.",
-    "Only admins can impersonate users.": "Solo los administradores pueden impersonar usuarios.",
     "Cannot impersonate another admin user.": "No es posible impersonar a otro usuario administrador.",
     "Avatar": "Avatar",
     "Presence": "Presencia",
     "Activity Log": "Registro de actividad",
     "Schemas": "Schemas",
-    "Tables": "Tablas"
+    "Tables": "Tablas",
+    "Cannot impersonate a deactivated user.": "No se puede impersonar a un usuario desactivado."
 }

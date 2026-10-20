@@ -59,14 +59,38 @@ class PermissionTest extends TestCase
         $this->grant($user, 'posts.view', 'posts.edit');
 
         $denied = Permission::where('name', 'posts.edit')->firstOrFail();
-        $user->update(['denied_permissions' => [$denied->id]]);
+        $user->forceFill(['denied_permissions' => [$denied->id]])->save();
 
-        // This is the whole reason policies must call checkPermission: Spatie's
-        // own answer still says yes, and following it would hand back access an
-        // admin believed they had revoked.
-        $this->assertTrue($user->fresh()->hasPermissionTo('posts.edit'));
-        $this->assertFalse($user->fresh()->checkPermission('posts.edit'));
-        $this->assertTrue($user->fresh()->checkPermission('posts.view'));
+        // Every way of asking has to agree. Spatie's hasPermissionTo() is the
+        // one the Gate, `can:` middleware and @can all end up in, so a deny
+        // that only checkPermission() honoured would leak back through them.
+        $fresh = $user->fresh();
+        $this->assertFalse($fresh->hasPermissionTo('posts.edit'));
+        $this->assertFalse($fresh->checkPermission('posts.edit'));
+        $this->assertFalse($fresh->can('posts.edit'));
+        $this->assertTrue($fresh->checkPermission('posts.view'));
+        $this->assertTrue($fresh->can('posts.view'));
+    }
+
+    public function test_a_denied_permission_also_beats_a_direct_grant(): void
+    {
+        $user = User::factory()->create(['is_admin' => false]);
+        $permission = Permission::firstOrCreate(['name' => 'posts.edit', 'guard_name' => 'web']);
+        $user->givePermissionTo($permission);
+
+        $user->forceFill(['denied_permissions' => [$permission->id]])->save();
+
+        $this->assertFalse($user->fresh()->hasPermissionTo('posts.edit'));
+    }
+
+    public function test_privilege_columns_cannot_be_mass_assigned(): void
+    {
+        $user = User::factory()->create(['is_admin' => false]);
+
+        $user->update(['is_admin' => true, 'denied_permissions' => [1]]);
+
+        $this->assertFalse($user->fresh()->is_admin);
+        $this->assertNull($user->fresh()->denied_permissions);
     }
 
     public function test_denied_permissions_are_excluded_from_the_effective_set(): void
@@ -75,7 +99,7 @@ class PermissionTest extends TestCase
         $this->grant($user, 'posts.view', 'posts.edit');
 
         $denied = Permission::where('name', 'posts.edit')->firstOrFail();
-        $user->update(['denied_permissions' => [$denied->id]]);
+        $user->forceFill(['denied_permissions' => [$denied->id]])->save();
 
         $names = $user->fresh()->getActualPermissions()->pluck('name')->all();
 
@@ -89,7 +113,7 @@ class PermissionTest extends TestCase
         $this->grant($user, 'posts.view', 'posts.edit');
 
         $denied = Permission::where('name', 'posts.edit')->firstOrFail();
-        $user->update(['denied_permissions' => [$denied->id]]);
+        $user->forceFill(['denied_permissions' => [$denied->id]])->save();
 
         // If a denied permission leaked into this prop the UI would offer an
         // action the server then refuses.

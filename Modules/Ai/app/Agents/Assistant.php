@@ -25,7 +25,19 @@ class Assistant implements Agent, Conversational
     use Promptable;
 
     /** @param array<int, array{role: string, content: string}> $history */
-    public function __construct(private readonly array $history = []) {}
+    public function __construct(
+        private readonly array $history = [],
+        private readonly ?int $maxTokens = null,
+    ) {}
+
+    /**
+     * Read by the SDK for every request. Without it the provider's own default
+     * applies, which on some models is several thousand tokens per answer.
+     */
+    public function maxTokens(): int
+    {
+        return $this->maxTokens ?? (int) config('ai.assistant.max_tokens', 1024);
+    }
 
     public function instructions(): Stringable|string
     {

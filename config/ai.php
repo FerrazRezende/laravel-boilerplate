@@ -22,6 +22,24 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Assistant Limits (Ai module)
+    |--------------------------------------------------------------------------
+    |
+    | Ceilings on what one chat request can cost. The public chat on the
+    | landing page needs no account, so it also gets a site-wide daily budget:
+    | per-IP throttling alone does nothing against many addresses.
+    |
+    */
+
+    'assistant' => [
+        'max_tokens' => (int) env('AI_ASSISTANT_MAX_TOKENS', 1024),
+        'public_max_tokens' => (int) env('AI_PUBLIC_CHAT_MAX_TOKENS', 512),
+        'public_history_characters' => 6000,
+        'public_daily_limit' => (int) env('AI_PUBLIC_CHAT_DAILY_LIMIT', 500),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Caching
     |--------------------------------------------------------------------------
     |

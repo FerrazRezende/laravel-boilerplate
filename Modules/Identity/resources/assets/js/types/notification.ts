@@ -1,7 +1,7 @@
 export type NotificationType = 'database_created' | 'database_failed' | 'schema_changed' | 'backup_completed';
 
 export interface Notification {
-  id: number;
+  id: string;
   type: NotificationType;
   title: string;
   message: string;

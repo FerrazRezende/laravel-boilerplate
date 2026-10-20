@@ -7,7 +7,6 @@ namespace Modules\FeatureFlags\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Modules\FeatureFlags\Enums\RolloutStrategyEnum;
 use Modules\FeatureFlags\Http\Requests\ActivateFeatureRequest;
 use Modules\FeatureFlags\Http\Requests\UpdateFeatureRequest;
 use Modules\FeatureFlags\Http\Resources\FeatureCollection;
@@ -26,8 +25,6 @@ class FeatureFlagController extends Controller
      */
     public function index(Request $request)
     {
-        abort_unless($request->user()->is_admin, 403);
-
         $features = $this->featureService->getAllFeatures();
 
         if ($request->wantsJson()) {
@@ -44,8 +41,6 @@ class FeatureFlagController extends Controller
      */
     public function show(Request $request, string $feature)
     {
-        abort_unless($request->user()->is_admin, 403);
-
         $featureDto = $this->featureService->getFeature($feature);
 
         abort_unless($featureDto, 404, 'Feature not found');
@@ -60,7 +55,7 @@ class FeatureFlagController extends Controller
             ->get();
 
         // Calculate which users have access to this feature
-        $usersWithAccess = $this->getUsersWithAccess($featureDto, $users);
+        $usersWithAccess = $this->featureService->usersWithAccess($feature, $users)->toArray();
 
         return Inertia::render('Features/Show', [
             'feature' => (new FeatureResource($featureDto))->toArray($request),
@@ -71,45 +66,10 @@ class FeatureFlagController extends Controller
     }
 
     /**
-     * Get users who have access to the feature based on strategy.
-     */
-    private function getUsersWithAccess(array $feature, $allUsers): array
-    {
-        if (! $feature['is_active']) {
-            return [];
-        }
-
-        return match (RolloutStrategyEnum::from($feature['strategy'])) {
-            RolloutStrategyEnum::ALL => $allUsers->toArray(),
-            RolloutStrategyEnum::PERCENTAGE => $allUsers
-                ->filter(fn ($user) => $this->checkPercentage((string) $user->id, $feature['percentage']))
-                ->values()
-                ->toArray(),
-            RolloutStrategyEnum::USERS => $allUsers
-                ->filter(fn ($user) => in_array((string) $user->id, $feature['user_ids'] ?? []))
-                ->values()
-                ->toArray(),
-            default => [],
-        };
-    }
-
-    /**
-     * Deterministic percentage check matching FeatureFlagService.
-     */
-    private function checkPercentage(string $userId, int $percentage): bool
-    {
-        $hash = crc32($userId);
-
-        return ($hash % 100) < $percentage;
-    }
-
-    /**
      * Activate a feature.
      */
     public function activate(ActivateFeatureRequest $request, string $feature)
     {
-        abort_unless($request->user()->is_admin, 403);
-
         $featureDto = $this->featureService->activate(
             $feature,
             [
@@ -132,8 +92,6 @@ class FeatureFlagController extends Controller
      */
     public function deactivate(Request $request, string $feature)
     {
-        abort_unless($request->user()->is_admin, 403);
-
         $featureDto = $this->featureService->deactivate($feature, $request->user());
 
         if ($request->wantsJson()) {
@@ -148,8 +106,6 @@ class FeatureFlagController extends Controller
      */
     public function update(UpdateFeatureRequest $request, string $feature)
     {
-        abort_unless($request->user()->is_admin, 403);
-
         $featureDto = $this->featureService->update(
             $feature,
             $request->validated(),
@@ -164,8 +120,6 @@ class FeatureFlagController extends Controller
      */
     public function history(Request $request, string $feature)
     {
-        abort_unless($request->user()->is_admin, 403);
-
         $history = $this->featureService->getHistory($feature);
 
         return response()->json(['data' => $history]);
@@ -176,8 +130,6 @@ class FeatureFlagController extends Controller
      */
     public function addUser(Request $request, string $feature)
     {
-        abort_unless($request->user()->is_admin, 403);
-
         $request->validate(['user_id' => 'required|string']);
 
         $featureDto = $this->featureService->addUser(
@@ -194,8 +146,6 @@ class FeatureFlagController extends Controller
      */
     public function removeUser(Request $request, string $feature, string $userId)
     {
-        abort_unless($request->user()->is_admin, 403);
-
         $featureDto = $this->featureService->removeUser(
             $feature,
             $userId,
