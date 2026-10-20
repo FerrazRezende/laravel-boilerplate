@@ -7,5 +7,6 @@
     "Try it": "Pruébalo",
     "Ask the assistant": "Pregunta al asistente",
     "No AI provider key is configured. Add one to your .env to enable the assistant.": "No hay ninguna key de proveedor de IA configurada. Añade una a tu .env para habilitar el asistente.",
-    "The assistant did not reply. Check the provider key and the logs.": "El asistente no respondió. Revisa la key del proveedor y los logs."
+    "The assistant did not reply. Check the provider key and the logs.": "El asistente no respondió. Revisa la key del proveedor y los logs.",
+    "The assistant has answered all it can for today. Please try again tomorrow.": "El asistente ya respondió todo lo que podía hoy. Inténtalo de nuevo mañana."
 }
