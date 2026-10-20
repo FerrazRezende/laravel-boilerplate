@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\Route;
 use Modules\Observability\Http\Controllers\JobController;
 
-Route::middleware(['web', 'auth', 'feature:observability'])
+Route::middleware(['web', 'auth', 'admin', 'feature:observability'])
     ->prefix('system')
     ->name('system.')
     ->group(function (): void {

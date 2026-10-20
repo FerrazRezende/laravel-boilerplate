@@ -13,8 +13,16 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        // Every account below shares the password "password". In production
+        // that is a known admin login, so create the first admin by hand there.
+        if (app()->isProduction()) {
+            $this->command?->warn('UserSeeder skipped: it only creates demo accounts.');
+
+            return;
+        }
+
         // Create God Admin user (system owner)
-        User::create([
+        User::forceCreate([
             'name' => 'Admin',
             'email' => 'admin@boilerplate.com',
             'password' => Hash::make('password'),
@@ -41,7 +49,7 @@ class UserSeeder extends Seeder
         ];
 
         foreach ($users as $userData) {
-            User::create([
+            User::forceCreate([
                 'name' => $userData['name'],
                 'email' => $userData['email'],
                 'password' => Hash::make('password'),

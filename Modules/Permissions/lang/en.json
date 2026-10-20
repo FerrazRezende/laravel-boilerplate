@@ -18,7 +18,6 @@
     "Select :category permissions": "Select :category permissions",
     "Unmark all": "Unmark",
     "Permissions synced successfully": "Permissions synced successfully",
-    "Cannot delete the last admin user": "Cannot delete the last admin user",
     "User deactivated successfully": "User deactivated successfully",
     "Required": "The :attribute field is required.",
     "Manage system users": "Manage system users",
@@ -76,11 +75,11 @@
     "Error loading activities": "Error loading activities",
     "You are now impersonating :name.": "You are now impersonating :name.",
     "You are no longer impersonating.": "You are no longer impersonating.",
-    "Only admins can impersonate users.": "Only admins can impersonate users.",
     "Cannot impersonate another admin user.": "Cannot impersonate another admin user.",
     "Avatar": "Avatar",
     "Presence": "Presence",
     "Activity Log": "Activity Log",
     "Schemas": "Schemas",
-    "Tables": "Tables"
+    "Tables": "Tables",
+    "Cannot impersonate a deactivated user.": "Cannot impersonate a deactivated user."
 }

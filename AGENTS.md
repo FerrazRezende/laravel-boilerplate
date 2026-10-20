@@ -50,13 +50,19 @@ They answer different questions and do not substitute for each other.
   Note `edit`, not `update` — this matches `usePermissions().canEdit()` on
   the frontend.
 
-Two rules that are easy to get wrong:
+Rules that are easy to get wrong:
 
-- Policies must call `User::checkPermission()`, never Spatie's
-  `hasPermissionTo()`. Only the former honours `denied_permissions`, which lets
-  an admin revoke one permission from one person without rebuilding their role.
+- `denied_permissions` lets an admin revoke one permission from one person
+  without rebuilding their role. `User` overrides Spatie's `hasPermissionTo()`
+  so the deny wins on every path — Policies, `can:` middleware, `@can`,
+  `Gate::allows()`. Don't bypass it by querying the role's permissions
+  directly. `denied_permissions` and `is_admin` are not mass assignable; set
+  them with `forceFill()`.
+- The `/system` panel is gated by the `admin` route middleware on each group,
+  not by checks inside controllers. A new admin route goes inside one of
+  those groups.
 - `is_admin` bypasses RBAC, but **not** feature flags — except in
-  `Modules\FeatureFlags\Providers\FeatureFlagsServiceProvider::resolveFeature`,
+  `Modules\FeatureFlags\Services\FeatureFlagService::resolve`,
   which exempts admins from flags deliberately. Expect admins to keep access
   to a feature you switched off.
 

@@ -16,7 +16,7 @@ use Modules\FeatureFlags\Http\Controllers\Api\V1\FeatureController;
 // SetLocaleMiddleware is not optional here. Under Octane the application
 // instance outlives the request, so a group that never sets a locale inherits
 // whatever the worker's previous request left behind.
-Route::middleware(['auth:sanctum', SetLocaleMiddleware::class])
+Route::middleware(['auth:sanctum', 'active', SetLocaleMiddleware::class])
     ->prefix('api/v1')
     ->name('api.v1.')
     ->group(function () {

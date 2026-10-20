@@ -21,8 +21,6 @@ class RoleController extends Controller
      */
     public function create(Request $request)
     {
-        abort_unless($request->user()->is_admin, 403);
-
         return Inertia::render('Roles/Form', [
             'allPermissions' => Permission::orderBy('name')->get(['id', 'name', 'guard_name']),
         ]);
@@ -33,8 +31,6 @@ class RoleController extends Controller
      */
     public function edit(Request $request, Role $role)
     {
-        abort_unless($request->user()->is_admin, 403);
-
         $role->load('permissions');
 
         return Inertia::render('Roles/Form', [
@@ -55,8 +51,6 @@ class RoleController extends Controller
      */
     public function store(StoreRoleRequest $request)
     {
-        abort_unless($request->user()->is_admin, 403);
-
         $role = Role::create([
             'name' => $request->validated('name'),
             'guard_name' => 'web',
@@ -79,8 +73,6 @@ class RoleController extends Controller
      */
     public function update(UpdateRoleRequest $request, Role $role)
     {
-        abort_unless($request->user()->is_admin, 403);
-
         $role->update([
             'name' => $request->validated('name'),
         ]);
@@ -100,8 +92,6 @@ class RoleController extends Controller
      */
     public function syncPermissions(SyncRolePermissionsRequest $request, Role $role)
     {
-        abort_unless($request->user()->is_admin, 403);
-
         $role->syncPermissions($request->validated('permissions', []));
 
         if ($request->wantsJson()) {
@@ -116,8 +106,6 @@ class RoleController extends Controller
      */
     public function destroy(Request $request, Role $role)
     {
-        abort_unless($request->user()->is_admin, 403);
-
         // Check if role has users
         if ($role->users()->exists()) {
             return redirect()->back()->withErrors([

@@ -29,17 +29,10 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        abort_unless($request->user()->is_admin, 403);
-
         $search = $request->input('search');
 
         $users = User::with('roles', 'permissions')
-            ->when($search, function ($query, $search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%");
-                });
-            })
+            ->matching($search)
             ->orderBy('name')
             ->paginate(20);
 
@@ -59,8 +52,6 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        abort_unless($request->user()->is_admin, 403);
-
         $user = User::create([
             'name' => $request->validated('name'),
             'email' => $request->validated('email'),
@@ -90,8 +81,6 @@ class UserController extends Controller
      */
     public function show(Request $request, User $user)
     {
-        abort_unless($request->user()->is_admin, 403);
-
         $user->load(['roles.permissions', 'permissions']);
 
         if ($request->wantsJson()) {
@@ -110,7 +99,9 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user)
     {
-        abort_unless($request->user()->is_admin, 403);
+        if ($request->has('active') && ! $request->boolean('active') && $user->isLastActiveAdmin()) {
+            return $this->lastAdminResponse($request);
+        }
 
         $user->update($request->validated());
 
@@ -126,8 +117,6 @@ class UserController extends Controller
      */
     public function updateRole(UpdateUserRoleRequest $request, User $user)
     {
-        abort_unless($request->user()->is_admin, 403);
-
         // Remove all existing roles and assign the new one (if provided)
         $user->syncRoles([]);
 
@@ -150,8 +139,6 @@ class UserController extends Controller
      */
     public function syncPermissions(SyncDirectPermissionsRequest $request, User $user)
     {
-        abort_unless($request->user()->is_admin, 403);
-
         // Sync direct permissions only (role permissions are kept)
         $user->syncPermissions($request->validated('permissions', []));
 
@@ -174,13 +161,8 @@ class UserController extends Controller
      */
     public function destroy(Request $request, User $user)
     {
-        abort_unless($request->user()->is_admin, 403);
-
-        // Don't delete the last admin
-        if ($user->is_admin && User::where('is_admin', true)->count() <= 1) {
-            return redirect()->back()->withErrors([
-                'error' => __('Cannot delete the last admin user'),
-            ]);
+        if ($user->isLastActiveAdmin()) {
+            return $this->lastAdminResponse($request);
         }
 
         // Deactivate instead of deleting
@@ -198,10 +180,7 @@ class UserController extends Controller
      */
     public function activities(Request $request, User $user, UserActivityService $activityService)
     {
-        abort_unless($request->user()->is_admin, 403);
-
-        $page = (int) $request->input('page', 1);
-        $perPage = (int) $request->input('per_page', 20);
+        $perPage = min(max($request->integer('per_page', 20), 1), 100);
 
         $activities = $activityService->getUserActivities($user, $perPage);
 
@@ -212,5 +191,16 @@ class UserController extends Controller
             'per_page' => $activities->perPage(),
             'total' => $activities->total(),
         ]);
+    }
+
+    private function lastAdminResponse(Request $request)
+    {
+        $message = __('The last active admin cannot be deactivated or deleted.');
+
+        if ($request->wantsJson()) {
+            return response()->json(['message' => $message], 422);
+        }
+
+        return redirect()->back()->withErrors(['error' => $message]);
     }
 }

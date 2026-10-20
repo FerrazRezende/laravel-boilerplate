@@ -23,8 +23,6 @@ class JobController extends Controller
 
     public function index(Request $request): Response|JsonResponse
     {
-        abort_unless($request->user()->is_admin, 403);
-
         $payload = [
             'jobs' => $this->store->running(),
             'queues' => $this->queues->all(),
@@ -50,8 +48,6 @@ class JobController extends Controller
      */
     public function demo(Request $request): RedirectResponse
     {
-        abort_unless($request->user()->is_admin, 403);
-
         $queue = $request->validate([
             'queue' => ['nullable', 'string', Rule::in($this->queues->names())],
         ])['queue'] ?? null;

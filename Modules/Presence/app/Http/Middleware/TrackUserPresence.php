@@ -18,7 +18,10 @@ final class TrackUserPresence
 
     public function handle(Request $request, Closure $next): Response
     {
-        if (! Auth::check()) {
+        // While an admin impersonates someone, the pages are the admin's
+        // browsing, not the user's. The session key is the one
+        // Permissions' ImpersonateController sets.
+        if (! Auth::check() || ($request->hasSession() && $request->session()->has('impersonating_id'))) {
             return $next($request);
         }
 

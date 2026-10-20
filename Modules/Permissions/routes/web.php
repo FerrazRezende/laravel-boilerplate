@@ -14,13 +14,14 @@ use Modules\Permissions\Http\Controllers\UserController;
 |--------------------------------------------------------------------------
 |
 | Routes for the system administration panel (/system/*).
-| Only accessible by God Admin (is_admin = true).
+| Only accessible by God Admin (is_admin = true), enforced once by the
+| `admin` middleware on the group.
 | Permissions, Roles, Users, Impersonate. Features live in the FeatureFlags
 | module's own routes/web.php (see Modules/FeatureFlags/routes/web.php).
 |
 */
 
-Route::middleware(['web', 'auth'])
+Route::middleware(['web', 'auth', 'admin'])
     ->prefix('system')
     ->name('system.')
     ->group(function (): void {
@@ -45,7 +46,10 @@ Route::middleware(['web', 'auth'])
         Route::post('/users/{user}/permissions', [UserController::class, 'syncPermissions'])->name('users.permissions.sync');
         Route::get('/users/{user}/activities', [UserController::class, 'activities'])->name('users.activities');
         Route::post('/users/{user}/impersonate', [ImpersonateController::class, 'start'])->name('users.impersonate.start');
-
-        // Impersonate
-        Route::post('/stop-impersonating', [ImpersonateController::class, 'stop'])->name('impersonate.stop');
     });
+
+// Outside the admin group: while impersonating, the signed-in user is the
+// non-admin being impersonated, and they are the one who has to stop.
+Route::middleware(['web', 'auth'])
+    ->post('/system/stop-impersonating', [ImpersonateController::class, 'stop'])
+    ->name('system.impersonate.stop');
